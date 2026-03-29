@@ -5,10 +5,11 @@ description = ""
 authors = [
     {name = "thomas011001",email = "thomasyacoub321@gmail.com"}
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.14,<4.0"
 dependencies = [
     "django (>=6.0.3,<7.0.0)",
-    "psycopg[binary] (>=3.3.3,<4.0.0)"
+    "psycopg[binary] (>=3.3.3,<4.0.0)",
+    "django-environ (>=0.13.0,<0.14.0)"
 ]
 
 
@@ -18,5 +19,5 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "black (>=26.3.1,<27.0.0)"
+    "ipython (>=9.12.0,<10.0.0)"
 ]
