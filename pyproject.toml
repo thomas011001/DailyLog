@@ -20,5 +20,9 @@ build-backend = "poetry.core.masonry.api"
 
 [dependency-groups]
 dev = [
-    "ipython (>=9.12.0,<10.0.0)"
+    "ipython (>=9.12.0,<10.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)"
 ]
+
+[tool.taskipy.tasks]
+dev = "python manage.py tailwind dev"
