@@ -10,7 +10,8 @@ dependencies = [
     "django (>=6.0.3,<7.0.0)",
     "psycopg[binary] (>=3.3.3,<4.0.0)",
     "django-environ (>=0.13.0,<0.14.0)",
-    "django-tailwind[cookiecutter,honcho,reload] (>=4.4.2,<5.0.0)"
+    "django-tailwind[cookiecutter,honcho,reload] (>=4.4.2,<5.0.0)",
+    "django-widget-tweaks (>=1.5.1,<2.0.0)"
 ]
 
 
@@ -21,8 +22,9 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "ipython (>=9.12.0,<10.0.0)",
-    "taskipy (>=1.14.1,<2.0.0)"
+    "taskipy (>=1.14.1,<2.0.0)",
 ]
 
 [tool.taskipy.tasks]
 dev = "python manage.py tailwind dev"
+shell = "python manage.py shell"
