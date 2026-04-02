@@ -1,0 +1,14 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en" data-theme="">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>DailyLog</title>
+    </head>
+    <body>
+        {% tailwind_css %}
+        {% block body %}{% endblock %}
+        <script src={% static "js/htmx.min.js" %}></script>
+    </body>
+</html>
