@@ -4,11 +4,47 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django import forms
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.urls import is_valid_path, reverse
 
+from core.models import Day
+
+
+class CreatingDayForm(forms.Form):
+  title = forms.CharField(label="Title", max_length=50, min_length=1, required=False)
+  date = forms.DateField(label="Date", widget=forms.DateInput(attrs={"type": "date"}))
+
+  def __init__(self, *args, **kwargs):
+    self.user = kwargs.pop('user', None)
+    super(CreatingDayForm, self).__init__(*args, **kwargs)
+
+  def clean_date(self):
+    date = self.cleaned_data.get('date')
+        
+    if self.user and Day.objects.filter(owner=self.user, date=date).exists():
+      raise forms.ValidationError("This Day Already Exists.")
+            
+    return date
 
 @login_required
 def index(request):
-  return render(request, "core/index.html")
+  return render(request, "core/index.html", context)
+
+@login_required
+def day(request):
+  if request.method == "POST":
+    form = CreatingDayForm(request.POST, user=request.user)
+    
+    if form.is_valid():
+      data = form.cleaned_data
+
+      new_day = Day(owner=request.user, title=data["title"], date=data["date"])
+      new_day.save()
+      if request.htmx:
+        return HttpResponse(status=204, headers={'HX-Redirect': reverse('index')})
+    if request.headers.get('HX-Request'):
+      return render(request, 'partials/creating_day_form.html', {"form": form})
+
+  return HttpResponse("")
 
 class SignUpForm(forms.Form):
   first_name = forms.CharField(label="First Name", max_length=50, min_length=2)
