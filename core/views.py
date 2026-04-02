@@ -57,7 +57,21 @@ def signup(request):
 class LoginForm(forms.Form):
   username = forms.CharField(label="Username", required=True)
   password = forms.CharField(label="Password",widget=forms.PasswordInput() , required=True)
+  
+  def clean(self):
+    cleaned_data = super().clean()
+    username = cleaned_data.get('username')
+    password = cleaned_data.get('password')
 
+    if username and password:
+      user = authenticate(username=username, password=password)
+      if user is None:
+        raise forms.ValidationError("Invalid username or password.")
+    
+      self.user_cache = user
+      
+    return cleaned_data
+  
 def login(request):
   if request.user.is_authenticated:
         return redirect('index')
@@ -65,18 +79,12 @@ def login(request):
   if request.method == "POST":
     form = LoginForm(request.POST)
     
-    body = request.POST
-    username = body.get("username")
-    password = body.get("password")
-
-    user = authenticate(request, password=password, username=username)
-    if user:
-      auth_login(request, user)
+    if form.is_valid():
+      auth_login(request, form.user_cache)
       return redirect("index")
 
     return render(request, "core/login.html", {
       "form": form,
-      "errors": "Invalid username or password."
     })
   
   form = LoginForm()
