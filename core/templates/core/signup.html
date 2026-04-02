@@ -1,12 +1,13 @@
-{% extends "core/layout.html" %} 
+{% extends "layout.html" %}
 {% block body %}
-<h1>Create New User</h1>
-<form action="{% url 'signup' %}" method="post">
-  {% if  errors%}
-    {{errors}}
-  {% endif %}
-  {% csrf_token %} 
-  {{ form.as_p }}
-  <button type="submit">Create</button>
-</form>
-{% endblock %}
+    <div class="h-dvh flex justify-center items-center">
+        <div id="signup-container">
+            {% include "partials/signup_form.html" %}
+            <div class="divider"></div>
+            <div class="flex justify-center items-center gap-1">
+                <p class="text-sm">Alread Have an Account?</p>
+                <a href="{% url "login" %}" class="btn btn-link p-0">Login</a>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

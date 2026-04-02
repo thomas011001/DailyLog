@@ -42,10 +42,12 @@ def signup(request):
                 last_name=data["last_name"],
                 password=data["password"]
             )
+            if request.htmx:
+              return HttpResponse(status=204, headers={'HX-Redirect': reverse('login')})
             return redirect("login")
-        return render(request, 'core/signup.html', {
-          "form": form,
-        })
+          
+        if request.headers.get('HX-Request'):
+            return render(request, 'partials/signup_form.html', {"form": form})
 
   form = SignUpForm()     
   return render(request, 'core/signup.html', {
