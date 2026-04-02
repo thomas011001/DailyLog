@@ -5,3 +5,6 @@ class Day(models.Model):
   owner = models.ForeignKey(User, on_delete=models.CASCADE)
   title = models.CharField(max_length=50, null=True)
   date = models.DateField()
+
+  class Meta:
+    unique_together = ("owner", "date")
