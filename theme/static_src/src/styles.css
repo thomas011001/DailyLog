@@ -10,46 +10,71 @@
   * the scope of this path.
   */
 @source "../../../**/*.{html,py,js}";
-
 @plugin "daisyui/theme" {
   name: "shadcn";
   default: true;
   prefersdark: false;
   color-scheme: light;
 
-  /* ── Base ── shadcn white/black defaults */
-  --color-base-100: oklch(100% 0 0);           /* white background */
-  --color-base-200: oklch(96% 0.01 240);       /* secondary/muted bg */
-  --color-base-300: oklch(91% 0.02 240);       /* border/input */
-  --color-base-content: oklch(15% 0.04 260);   /* foreground (near black) */
 
-  /* ── Primary ── shadcn dark navy button */
-  --color-primary: oklch(22% 0.06 260);
-  --color-primary-content: oklch(98% 0 0);
+  /* ── base-100 = --background (الخلفية الرئيسية) ── */
+  --color-base-100: oklch(1 0 0);
 
-  /* ── Secondary ── shadcn light gray pill */
-  --color-secondary: oklch(96% 0.02 220);
-  --color-secondary-content: oklch(22% 0.06 260);
+  /* ── base-200 = --muted / --secondary (خلفية ثانوية أفتح شوية) ── */
+  --color-base-200: oklch(0.97 0 0);
 
-  /* ── Accent ── same as shadcn accent (muted gray) */
-  --color-accent: oklch(96% 0.02 220);
-  --color-accent-content: oklch(22% 0.06 260);
+  /* ── base-300 = --border / --input (الحدود والـ inputs) ── */
+  --color-base-300: oklch(0.922 0 0);
 
-  /* ── Neutral ── */
-  --color-neutral: oklch(38% 0.05 260);
-  --color-neutral-content: oklch(98% 0 0);
+  /* ── base-content = --foreground (لون النص الرئيسي) ── */
+  --color-base-content: oklch(0.145 0 0);
 
-  /* ── Semantic ── */
-  --color-info: oklch(62% 0.18 220);
-  --color-info-content: oklch(98% 0 0);
-  --color-success: oklch(60% 0.2 140);
-  --color-success-content: oklch(98% 0 0);
-  --color-warning: oklch(78% 0.2 80);
-  --color-warning-content: oklch(20% 0.05 80);
-  --color-error: oklch(55% 0.25 25);           /* shadcn destructive red */
-  --color-error-content: oklch(98% 0 0);
+  /* ── primary = --primary (الزرار الأساسي الأسود الغامق) ── */
+  --color-primary: oklch(0.205 0 0);
 
-  /* ── Shape ── */
+  /* ── primary-content = --primary-foreground (النص فوق primary) ── */
+  --color-primary-content: oklch(0.985 0 0);
+
+  /* ── secondary = --secondary (رمادي فاتح جداً) ── */
+  --color-secondary: oklch(0.97 0 0);
+
+  /* ── secondary-content = --secondary-foreground ── */
+  --color-secondary-content: oklch(0.205 0 0);
+
+  /* ── accent = --accent (نفس الـ secondary في shadcn) ── */
+  --color-accent: oklch(0.97 0 0);
+
+  /* ── accent-content = --accent-foreground ── */
+  --color-accent-content: oklch(0.205 0 0);
+
+  /* ── neutral = --muted-foreground (مفيش مقابل مباشر، أقرب حاجة) ── */
+  --color-neutral: oklch(0.556 0 0);
+
+  /* ── neutral-content = --primary-foreground (النص فوق neutral) ── */
+  --color-neutral-content: oklch(0.985 0 0);
+
+  /* ── semantic colors (مفيش مقابل في shadcn غير destructive) ── */
+  --color-info: oklch(0.6 0.118 184.704);       /* = --chart-2 أقرب حاجة */
+  --color-info-content: oklch(0.985 0 0);
+
+  --color-success: oklch(0.6 0.15 140);         /* مفيش في shadcn، معقول */
+  --color-success-content: oklch(0.985 0 0);
+
+  --color-warning: oklch(0.828 0.189 84.429);   /* = --chart-4 أقرب حاجة */
+  --color-warning-content: oklch(0.145 0 0);
+
+  /* ── error = --destructive ── */
+  --color-error: oklch(0.577 0.245 27.325);
+  --color-error-content: oklch(0.985 0 0);
+
+  /* ── radius = --radius في shadcn هو 0.625rem ── */
   --radius-selector: 1rem;
-  --radius-field: 0.375rem;                    /* shadcn default radius */
-  --radius-box: 0.5rem
+  --radius-field: calc(0.625rem * 0.8);   /* ≈ radius-md */
+  --radius-box: 0.625rem;                 /* = --radius */
+
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+};
