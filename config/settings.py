@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "tailwind",
     "theme",
     'widget_tweaks',
+    "django_htmx",
 ]
 if DEBUG: 
     INSTALLED_APPS += ["django_browser_reload"]
