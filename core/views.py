@@ -81,12 +81,13 @@ def login(request):
     
     if form.is_valid():
       auth_login(request, form.user_cache)
-      return redirect("index")
+      
+      return HttpResponse(status=204, headers={'HX-Redirect': reverse('login')})
 
-    return render(request, "core/login.html", {
-      "form": form,
+    return render(request, "partials/login_form.html", {
+      "form": form
     })
-  
+
   form = LoginForm()
   return render(request, "core/login.html", {
     "form": form

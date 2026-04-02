@@ -1,13 +1,13 @@
-{% extends "core/layout.html" %}
+{% extends "layout.html" %}
 {% block body %}
-
-<h1>Login</h1>
-<form action="{% url "login" %}" method="post">
-  {% if errors %}
-  {{ errors }}
-  {% endif %}
-  {% csrf_token %}
-  {{ form.as_p }}  
-  <button type="submit">Login</button>
-</form>
+    <div class="h-dvh flex justify-center items-center">
+        <div class="">
+            {% include "partials/login_form.html" %}
+            <div class="divider"></div>
+            <div class="flex justify-center items-center gap-1">
+                <p class="text-sm">Don't Have an Accound</p>
+                <a href="{% url 'signup' %}" class="btn btn-link p-0">Create New One</a>
+            </div>
+        </div>
+    </div>
 {% endblock body %}
