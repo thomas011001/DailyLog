@@ -1,0 +1,7 @@
+<div id="day-content" class="px-10 pt-10">
+  {% comment %} header {% endcomment %}
+  <div class="flex flex-col gap-2">
+    <h1 class="text-5xl font-bold">{{ day.title|default:"Untitled"|capfirst }}</h1>
+    <p class="text-base-content/60">{{ day.date|date:"l, F jS" }}</p>
+  </div>
+</div>

@@ -5,7 +5,7 @@
       <li
           data-day-id="{{ day.id }}"
           hx-get="{% url "day-get" day.id %}"
-          hx-swap="innerHTML"
+          hx-swap="outerHTML"
           hx-target="#day-content"
           hx-push-url="true" 
       >
