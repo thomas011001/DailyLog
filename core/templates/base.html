@@ -35,23 +35,16 @@
                         </div>
                     </div>
                 </li>
-                <li class="flex-1 mt-5">
-                    <h2 class="menu-title">PAST DAYS</h2>
-                    <ul class="gap-3 flex flex-col py-3">
-                    {% for day in days %}
-                        <li
-                            hx-get="{% url "day-detail" day.id %}"
-                        >
-                            <div class="flex justify-between">
-                                <h3 class="text-base-content{% if not day.title %}/50 italic{% endif %} text-md font-bold">{{ day.title|capfirst|default:"Untitled" }}</h3>                                
-                                {% if day.date|date:"Y-m-d" == today %}
-                                    <span class="badge badge-primary rounded">Today</span>
-                                {% endif %}
-                                <p class="font-bold text-base-content/50 text-xs">{{ day.date|date:"M d"|upper }}</p>
-                            </div>
-                        </li>
-                    {% endfor %}
-                    </ul>
+                <li 
+                    id="day-list"
+                    class="flex-1 mt-5"
+                    hx-get={% url "day-list" %}
+                    hx-target="#day-list"
+                    hx-swap="innerHTML"
+                    hx-trigger="load, dayCreated from:body"
+                    hx-indicator="#day-list-skeleton"
+                    >
+                    {% include "partials/day_list_skeleton.html" %}
                 </li>
                 <li>
                     <button class="btn btn-primary" onclick="creatingdaymodal.showModal()">open modal</button>
