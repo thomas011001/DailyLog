@@ -1,0 +1,19 @@
+<h2 class="menu-title">PAST DAYS</h2>
+<ul class="gap-3 flex flex-col py-3">
+  {% for day in days %}
+      <li
+          hx-get="{% url "day-get" day.id %}"
+          hx-swap="innerHTML"
+          hx-target="#day-content"
+          hx-push-url="true" 
+      >
+          <div class="flex justify-between">
+              <h3 class="text-base-content{% if not day.title %}/50 italic{% endif %} text-md font-bold">{{ day.title|capfirst|default:"Untitled" }}</h3>                                
+              {% if day.date|date:"Y-m-d" == today %}
+                  <span class="badge badge-primary rounded">Today</span>
+              {% endif %}
+              <p class="font-bold text-base-content/50 text-xs">{{ day.date|date:"M d"|upper }}</p>
+          </div>
+      </li>
+  {% endfor %}
+</ul>
