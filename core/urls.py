@@ -8,6 +8,9 @@ urlpatterns = [
     path("signup", views.signup, name="signup" ),
     path("login", views.login, name="login"),
     path("logout", views.logout, name="logout"),
+
+    # day
     path("day", views.day_create, name="day-create"),
     path("day/<int:id>", views.day_get, name="day-get"),
+    path("day/list", views.day_list, name="day-list")
 ]
