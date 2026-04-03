@@ -1,8 +1,8 @@
 {% load widget_tweaks %}
 <form
-  id="createing-day-form"
+  id="creating-day-form"
   hx-post={% url "day" %}
-  hx-target="#createing-day-form"
+  hx-target="#creating-day-form"
   hx-swap="outerHTML"
 >
   {% csrf_token %}
