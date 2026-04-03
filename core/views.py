@@ -1,5 +1,9 @@
+import json
+
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django import forms
@@ -27,11 +31,16 @@ class CreatingDayForm(forms.Form):
 
 @login_required
 def index(request):
-  return render(request, "core/index.html", context)
+  days = Day.objects.filter(owner=request.user).order_by("-date")
+  context = {
+    "days": days,
+    "form": CreatingDayForm()
+  }
+  return render(request, "core/day.html", context)
 
+@require_POST
 @login_required
-def day(request):
-  if request.method == "POST":
+def day_create(request):
     form = CreatingDayForm(request.POST, user=request.user)
     
     if form.is_valid():
@@ -39,13 +48,21 @@ def day(request):
 
       new_day = Day(owner=request.user, title=data["title"], date=data["date"])
       new_day.save()
-      if request.htmx:
-        return HttpResponse(status=204, headers={'HX-Redirect': reverse('index')})
-    if request.headers.get('HX-Request'):
-      return render(request, 'partials/creating_day_form.html', {"form": form})
+  
+      return HttpResponse(
+                  status=204,
+                  headers={
+                      "HX-Location": json.dumps({
+                          "path": reverse("day-get", kwargs={'id': new_day.pk}),
+                          "target": "#day-content",
+                          "swap": "innerHTML",
+                      })
+                  }
+              )
 
-  return HttpResponse("")
-
+    return render(request, 'partials/creating_day_form.html', {"form": form})
+    
+def day_get(request) -> HttpResponse: ...
 class SignUpForm(forms.Form):
   first_name = forms.CharField(label="First Name", max_length=50, min_length=2)
   last_name = forms.CharField(label="Last Name", max_length=50, min_length=2)
