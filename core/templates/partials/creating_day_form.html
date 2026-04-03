@@ -4,6 +4,7 @@
   hx-post={% url 'day-create' %}
   hx-target="#creating-day-form"
   hx-swap="outerHTML"
+  hx-on::after-request="if(event.detail.successful) this.reset()"
 >
   {% csrf_token %}
   <fieldset class="fieldset w-80">
