@@ -5,10 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django import forms
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.urls import is_valid_path, reverse
+from django.urls import reverse
 
 from core.models import Day
 
@@ -36,7 +36,7 @@ def index(request):
     "days": days,
     "form": CreatingDayForm()
   }
-  return render(request, "core/day.html", context)
+  return render(request, "core/index.html", context)
 
 def day_list(request):
   days = Day.objects.filter(owner=request.user).order_by("-date")
@@ -70,7 +70,15 @@ def day_create(request):
 
     return render(request, 'partials/creating_day_form.html', {"form": form})
     
-def day_get(request) -> HttpResponse: ...
+def day_get(request, id):
+  day = get_object_or_404(Day, id=id, owner=request.user)
+  if request.htmx:
+    response = render(request, 'partials/day_get.html', {'day': day})
+    response["HX-Trigger"] = "dayGet"
+    return response
+  
+
+  return render(request, "core/day.html", {"day": day})
 class SignUpForm(forms.Form):
   first_name = forms.CharField(label="First Name", max_length=50, min_length=2)
   last_name = forms.CharField(label="Last Name", max_length=50, min_length=2)
