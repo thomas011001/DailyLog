@@ -52,6 +52,10 @@ def day_create(request):
       return HttpResponse(
                   status=204,
                   headers={
+                      "HX-Trigger": json.dumps({
+                          "closeDialog": None,
+                          "dayCreated": None, 
+                      }),
                       "HX-Location": json.dumps({
                           "path": reverse("day-get", kwargs={'id': new_day.pk}),
                           "target": "#day-content",
