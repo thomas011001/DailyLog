@@ -38,6 +38,10 @@ def index(request):
   }
   return render(request, "core/day.html", context)
 
+def day_list(request):
+  days = Day.objects.filter(owner=request.user).order_by("-date")
+  return render(request, "partials/day_list.html", {"days": days})
+
 @require_POST
 @login_required
 def day_create(request):
