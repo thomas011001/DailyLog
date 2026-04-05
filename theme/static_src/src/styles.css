@@ -19,6 +19,37 @@
   html, body {
     font-family: "Inter", sans-serif !important;
   }
+
+  /* 1. تحديد عرض السكرول بار (هنا خليناه رفيع 8px) */
+  ::-webkit-scrollbar {
+    width: 8px; /* للسكرول الرأسي */
+    height: 8px; /* للسكرول الأفقي */
+  }
+
+  /* 2. خلفية السكرول بار (المجرى اللي بيمشي فيه) */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+  }
+
+  /* 3. الجزء المتحرك (الـ Handle) */
+  ::-webkit-scrollbar-thumb {
+    background: #ccc; /* لون هادي */
+    border-radius: 10px; /* عشان يكون دائري */
+    border: 2px solid #f1f1f1; /* بيعمل مسافة وهمية عشان يبان أرفع وأنضف */
+  }
+
+  /* 4. تغيير اللون لما الماوس ييجي عليه (Hover) */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999; 
+  }
+
+  /* للمتصفحات اللي بتدعم الخاصية الجديدة (مثل Firefox) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f1f1f1;
+  }
+  
 }
 
 @source "../../../**/*.{html,py,js}";
