@@ -5,12 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import redirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django import forms
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.urls import reverse
 
-from core.models import Day
+from core.models import Day, Task
 
 
 class CreatingDayForm(forms.Form):
@@ -165,3 +165,7 @@ def login(request):
 def logout(request):
   auth_logout(request)
   return redirect("login")
+
+def task_list(request, id):
+  tasks = Task.objects.filter(day_id=id)
+  return render(request, "partials/task_list.html", {"tasks": tasks})

@@ -12,5 +12,9 @@ urlpatterns = [
     # day
     path("day", views.day_create, name="day-create"),
     path("day/<int:id>", views.day_get, name="day-get"),
-    path("day/list", views.day_list, name="day-list")
+    path("day/list", views.day_list, name="day-list"),
+
+    # tasks
+    path("day/<int:id>/tasks", views.task_list, name="task-list")
+    
 ]
