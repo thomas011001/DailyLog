@@ -1,7 +1,8 @@
 <div id="day-content" class="px-10 pt-10">
   {% comment %} header {% endcomment %}
-  <div class="flex flex-col gap-2">
-    <h1 class="text-5xl font-bold">{{ day.title|default:"Untitled"|capfirst }}</h1>
+  <div class="flex flex-col w-full">
+      <h1 class="break-all text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter {% if not day.title %}italic{% endif %}">{{ day.title|default:"Untitled"|upper }}</h1>
+      <div class="flex justify-between items-center">
     <p class="text-base-content/60">{{ day.date|date:"l, F jS" }}</p>
       <button class="btn btn-ghost w-fit">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
