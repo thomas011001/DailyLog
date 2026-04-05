@@ -31,9 +31,7 @@ class CreatingDayForm(forms.Form):
 
 @login_required
 def index(request):
-  days = Day.objects.filter(owner=request.user).order_by("-date")
   context = {
-    "days": days,
     "form": CreatingDayForm()
   }
   return render(request, "core/index.html", context)
@@ -63,7 +61,7 @@ def day_create(request):
                       "HX-Location": json.dumps({
                           "path": reverse("day-get", kwargs={'id': new_day.pk}),
                           "target": "#day-content",
-                          "swap": "innerHTML",
+                          "swap": "outerHTML",
                       })
                   }
               )
@@ -78,7 +76,8 @@ def day_get(request, id):
     return response
   
 
-  return render(request, "core/day.html", {"day": day})
+  return render(request, "core/day.html", {"day": day, "form": CreatingDayForm()})
+
 class SignUpForm(forms.Form):
   first_name = forms.CharField(label="First Name", max_length=50, min_length=2)
   last_name = forms.CharField(label="Last Name", max_length=50, min_length=2)
