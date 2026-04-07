@@ -29,6 +29,9 @@ class CreatingDayForm(forms.Form):
             
     return date
 
+class CreateTaskForm(forms.Form):
+  title = forms.CharField(min_length=2)
+
 @login_required
 def index(request):
   context = {
@@ -71,12 +74,11 @@ def day_create(request):
 def day_get(request, id):
   day = get_object_or_404(Day, id=id, owner=request.user)
   if request.htmx:
-    response = render(request, 'partials/day_get.html', {'day': day})
+    response = render(request, 'partials/day_get.html', {'day': day, "task_form": CreateTaskForm()})
     response["HX-Trigger"] = "dayGet"
     return response
-  
 
-  return render(request, "core/day.html", {"day": day, "form": CreatingDayForm()})
+  return render(request, "core/day.html", {"day": day, "form": CreatingDayForm(), "task_form": CreateTaskForm()})
 
 class SignUpForm(forms.Form):
   first_name = forms.CharField(label="First Name", max_length=50, min_length=2)
@@ -169,3 +171,33 @@ def logout(request):
 def task_list(request, id):
   tasks = Task.objects.filter(day_id=id)
   return render(request, "partials/task_list.html", {"tasks": tasks})
+
+def task_create(request, id):
+  day = get_object_or_404(Day, pk=id)
+  form = CreateTaskForm(request.POST)
+  if form.is_valid():
+    data = form.cleaned_data
+
+    new_task = Task(day=day, title=data["title"])
+    new_task.save()
+
+    return HttpResponse(
+                  status=204,
+                  headers={
+                      "HX-Trigger": json.dumps({
+                          "closeDialog": None,
+                          "taskCreated": None, 
+                      }),
+                  }
+              ) 
+  
+  return render(request, "partials/create_task_form.html", {"day": day, "task_form": form})
+
+@require_POST
+def task_toggle(request, id):
+  task = get_object_or_404(Task, pk=id)
+  task.is_complete = not task.is_complete
+  print(task.is_complete)
+  task.save()
+  
+  return render(request, "partials/task_item.html", {"task": task})

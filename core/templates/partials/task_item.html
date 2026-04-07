@@ -1,0 +1,14 @@
+<div class="flex items-center gap-5">
+  <input type="checkbox" 
+         class="checkbox checkbox-primary rounded checkbox-sm"
+         {% if task.is_complete %}checked{% endif %}
+         hx-post="{% url 'task-toggle' task.id %}"
+         hx-trigger="change"
+         hx-target="closest div"
+         hx-swap="outerHTML"
+         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+         >
+  <h4 class="font-bold text-base-content {% if task.is_complete %}line-through opacity-50{% endif %}">
+    {{ task.title|upper }}
+  </h4>
+</div>

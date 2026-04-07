@@ -15,6 +15,7 @@ urlpatterns = [
     path("day/list", views.day_list, name="day-list"),
 
     # tasks
-    path("day/<int:id>/tasks", views.task_list, name="task-list")
-    
+    path("day/<int:id>/tasks", views.task_list, name="task-list"),
+    path("day/<int:id>/task", views.task_create, name="task-create"),
+    path("task/<int:id>/toggle", views.task_toggle, name="task-toggle")
 ]
