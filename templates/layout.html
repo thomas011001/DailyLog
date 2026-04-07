@@ -10,5 +10,240 @@
         {% tailwind_css %}
         {% block body %}{% endblock body %}
         <script src={% static "js/htmx.min.js" %}></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('htmx:confirm', function(evt) {
+                if (evt.target.hasAttribute('hx-confirm')) {
+                    evt.preventDefault();
+                    
+                    const targetDialog = evt.target.closest('dialog');
+                    
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: evt.target.getAttribute('hx-confirm'),
+                        icon: 'warning',
+                        target: targetDialog || 'body',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444', 
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Issue the request using the original event detail function
+                            evt.detail.issueRequest(true);
+                        }
+                    });
+                }
+            });
+        </script>
+        <script>
+            let pomoInterval = null;
+            const POMO_MODES = {
+                work: 25 * 60,
+                shortBreak: 5 * 60,
+                longBreak: 15 * 60
+            };
+            const POMO_LABELS = {
+                work: "Work Phase",
+                shortBreak: "Short Break",
+                longBreak: "Long Break"
+            };
+
+            function initPomo() {
+                let state = localStorage.getItem('pomo_state') || 'stopped';
+                let mode = localStorage.getItem('pomo_mode') || 'work';
+                let timeLeft = parseInt(localStorage.getItem('pomo_timeLeft'));
+                if (isNaN(timeLeft)) {
+                    timeLeft = POMO_MODES[mode];
+                }
+                let endTime = parseInt(localStorage.getItem('pomo_endTime')) || 0;
+
+                updateModeButtons(mode);
+
+                if (state === 'running') {
+                    const now = Math.floor(Date.now() / 1000);
+                    timeLeft = endTime - now;
+                    
+                    if (timeLeft <= 0) {
+                        timeLeft = 0;
+                        state = 'stopped';
+                        localStorage.setItem('pomo_state', state);
+                        localStorage.setItem('pomo_timeLeft', 0);
+                        updatePomoDisplay(0, mode);
+                        playPomoAlarm();
+                    } else {
+                        updatePomoDisplay(timeLeft, mode);
+                        startInterval();
+                    }
+                } else {
+                    updatePomoDisplay(timeLeft, mode);
+                }
+                updateUXState(state);
+            }
+
+            function updateModeButtons(activeMode) {
+                document.querySelectorAll('[id^="pomo-"]').forEach(btn => {
+                    if (btn.id === 'pomo-work-btn' || btn.id === 'pomo-short-btn' || btn.id === 'pomo-long-btn') {
+                        btn.className = "flex-1 text-xs font-bold py-2 rounded-xl text-base-content/50 transition-all hover:text-base-content focus:outline-none";
+                    }
+                });
+                const activeBtn = document.getElementById('pomo-' + activeMode.replace('Break', '') + '-btn');
+                if (activeBtn) {
+                    activeBtn.className = "flex-1 text-xs font-bold py-2 rounded-xl bg-base-content text-base-100 shadow-sm transition-all focus:outline-none";
+                }
+                
+                const label = document.getElementById('pomo-phase-label');
+                if (label) {
+                    label.textContent = POMO_LABELS[activeMode];
+                }
+            }
+
+            function updatePomoDisplay(seconds, mode) {
+                if (seconds < 0) seconds = 0;
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                const display = document.getElementById('pomo-display');
+                if (display) {
+                    display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                }
+                const docTitleText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} - DailyLog`;
+                if(document.title !== docTitleText) document.title = docTitleText;
+
+                const circle = document.getElementById('pomo-progress');
+                if (circle) {
+                    const totalTime = POMO_MODES[mode || localStorage.getItem('pomo_mode') || 'work'];
+                    const circumference = 553;
+                    const offset = circumference - (seconds / totalTime) * circumference;
+                    circle.style.strokeDashoffset = offset;
+                }
+            }
+
+            function updateUXState(state) {
+                const btn = document.getElementById('pomo-toggle-btn');
+                const btnText = document.getElementById('pomo-toggle-text');
+                const startIcon = document.getElementById('pomo-start-icon');
+                const pauseIcon = document.getElementById('pomo-pause-icon');
+                const display = document.getElementById('pomo-display');
+                const progress = document.getElementById('pomo-progress');
+
+                if (state === 'running') {
+                    // Running state
+                    if(btn) btn.className = "btn btn-error shadow w-full h-14 rounded-xl flex items-center justify-center gap-2 border-none transition-all duration-300";
+                    if(btnText) btnText.textContent = "Pause";
+                    if(startIcon) startIcon.classList.add('hidden');
+                    if(pauseIcon) pauseIcon.classList.remove('hidden');
+                } else {
+                    // Stopped or Paused state
+                    const isPaused = state === 'paused';
+                    if(btn) btn.className = "btn btn-primary shadow w-full h-14 rounded-xl flex items-center justify-center gap-2 border-none transition-all duration-300";
+                    if(btnText) btnText.textContent = isPaused ? "Resume" : "Initialize";
+                    if(startIcon) startIcon.classList.remove('hidden');
+                    if(pauseIcon) pauseIcon.classList.add('hidden');
+                }
+            }
+
+            function setPomoMode(mode) {
+                clearPomoInterval();
+                localStorage.setItem('pomo_mode', mode);
+                localStorage.setItem('pomo_state', 'stopped');
+                const newTime = POMO_MODES[mode];
+                localStorage.setItem('pomo_timeLeft', newTime);
+                updateModeButtons(mode);
+                updatePomoDisplay(newTime, mode);
+                updateUXState('stopped');
+            }
+
+            function clearPomoInterval() {
+                if (pomoInterval) {
+                    clearInterval(pomoInterval);
+                    pomoInterval = null;
+                }
+            }
+
+            function togglePomo() {
+                let state = localStorage.getItem('pomo_state') || 'stopped';
+                let mode = localStorage.getItem('pomo_mode') || 'work';
+                let timeLeft = parseInt(localStorage.getItem('pomo_timeLeft'));
+                if (isNaN(timeLeft)) timeLeft = POMO_MODES[mode];
+
+                if (state === 'running') {
+                    // Pause
+                    clearPomoInterval();
+                    localStorage.setItem('pomo_state', 'paused');
+                    const now = Math.floor(Date.now() / 1000);
+                    const endTime = parseInt(localStorage.getItem('pomo_endTime'));
+                    timeLeft = endTime - now;
+                    if (timeLeft < 0) timeLeft = 0;
+                    localStorage.setItem('pomo_timeLeft', timeLeft);
+                    updateUXState('paused');
+                } else {
+                    // Start/Resume
+                    if (timeLeft <= 0) {
+                        timeLeft = POMO_MODES[mode];
+                    }
+                    localStorage.setItem('pomo_state', 'running');
+                    const endTime = Math.floor(Date.now() / 1000) + timeLeft;
+                    localStorage.setItem('pomo_endTime', endTime);
+                    startInterval();
+                    updateUXState('running');
+                }
+            }
+
+            function startInterval() {
+                clearPomoInterval();
+                pomoInterval = setInterval(pomoTick, 1000);
+            }
+
+            function resetPomo() {
+                const mode = localStorage.getItem('pomo_mode') || 'work';
+                setPomoMode(mode);
+            }
+
+            function pomoTick() {
+                const endTime = parseInt(localStorage.getItem('pomo_endTime'));
+                const now = Math.floor(Date.now() / 1000);
+                const timeLeft = endTime - now;
+                const mode = localStorage.getItem('pomo_mode') || 'work';
+                
+                if (timeLeft <= 0) {
+                    clearPomoInterval();
+                    localStorage.setItem('pomo_state', 'stopped');
+                    localStorage.setItem('pomo_timeLeft', 0);
+                    updatePomoDisplay(0, mode);
+                    updateUXState('stopped');
+                    playPomoAlarm();
+                    
+                    if (mode === 'work') {
+                        setPomoMode('shortBreak');
+                    } else {
+                        setPomoMode('work');
+                    }
+                } else {
+                    localStorage.setItem('pomo_timeLeft', timeLeft);
+                    updatePomoDisplay(timeLeft, mode);
+                }
+            }
+
+            function playPomoAlarm() {
+                if(typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: "Time's up!",
+                        icon: "info",
+                        toast: true,
+                        position: 'bottom-end',
+                        showConfirmButton: false,
+                        timer: 5000,
+                        timerProgressBar: true
+                    });
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", initPomo);
+            document.body.addEventListener('htmx:afterSwap', function(evt) {
+                if (document.getElementById('pomo-display')) {
+                    initPomo();
+                }
+            });
+        </script>
     </body>
 </html>

@@ -1,0 +1,39 @@
+{% load widget_tweaks %}
+<form
+  id="editing-day-form"
+  hx-post="{% url 'core:day-update' day.id %}"
+  hx-target="#editing-day-form"
+  hx-swap="outerHTML"
+>
+  {% csrf_token %}
+  <fieldset class="fieldset w-80">
+      {% for field in form %}
+          <fieldset class="fieldset">
+              <legend class="fieldset-legend">{{ field.label }}</legend>
+              {{ field|add_class:"input validator w-full" }}
+          </fieldset>
+          {% if field.errors %}
+            <div role="alert" class="alert alert-error mt-2 p-2">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 shrink-0 stroke-current"
+                    fill="none"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-sm">{{ field.errors|striptags }}</span>
+            </div>
+          {% endif %}
+      {% endfor %}
+      
+      <div class="flex justify-between w-full mt-6">
+          <button type="button" 
+                  class="btn btn-error btn-outline btn-sm"
+                  hx-post="{% url 'core:day-delete' day.id %}"
+                  hx-confirm="Are you sure you want to delete this day? All tasks will be lost."
+          >
+              Delete Day
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm">Save</button>
+      </div>
+  </fieldset>
+</form>

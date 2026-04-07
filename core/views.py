@@ -9,6 +9,24 @@ from django.urls import reverse
 
 from core.models import Day, Task
 
+class EditingDayForm(forms.ModelForm):
+  class Meta:
+    model = Day
+    fields = ['title', 'date']
+    widgets = {
+      'date': forms.DateInput(attrs={"type": "date"})
+    }
+
+  def __init__(self, *args, **kwargs):
+    self.user = kwargs.pop('user', None)
+    super(EditingDayForm, self).__init__(*args, **kwargs)
+
+  def clean_date(self):
+    date = self.cleaned_data.get('date')
+    if self.user and Day.objects.filter(owner=self.user, date=date).exclude(pk=self.instance.pk).exists():
+      raise forms.ValidationError("This Day Already Exists.")
+    return date
+
 
 class CreatingDayForm(forms.Form):
   title = forms.CharField(label="Title", max_length=50, min_length=1, required=False)
@@ -67,6 +85,45 @@ def day_create(request):
               )
 
     return render(request, 'partials/creating_day_form.html', {"form": form})
+
+@login_required
+def day_update(request, id):
+    day = get_object_or_404(Day, id=id, owner=request.user)
+    
+    if request.method == "POST":
+        form = EditingDayForm(request.POST, instance=day, user=request.user)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(
+                status=204,
+                headers={
+                    "HX-Trigger": json.dumps({
+                        "closeDialog": None,
+                        "dayCreated": None, 
+                    }),
+                    "HX-Location": json.dumps({
+                        "path": reverse("core:day-get", kwargs={'id': day.pk}),
+                        "target": "#day-content",
+                        "swap": "outerHTML",
+                    })
+                }
+            )
+    else:
+        form = EditingDayForm(instance=day)
+
+    return render(request, 'partials/editing_day_form.html', {"form": form, "day": day})
+
+@require_POST
+@login_required
+def day_delete(request, id):
+    day = get_object_or_404(Day, id=id, owner=request.user)
+    day.delete()
+    return HttpResponse(
+        status=204,
+        headers={
+            "HX-Redirect": reverse("core:index")
+        }
+    )
     
 def day_get(request, id):
   day = get_object_or_404(Day, id=id, owner=request.user)
@@ -110,3 +167,10 @@ def task_toggle(request, id):
   task.save()
   
   return render(request, "partials/task_item.html", {"task": task})
+
+@require_POST
+@login_required
+def task_delete(request, id):
+    task = get_object_or_404(Task, pk=id, day__owner=request.user)
+    task.delete()
+    return HttpResponse("")

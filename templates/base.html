@@ -13,11 +13,43 @@
             </div>
             <div class="drawer-end lg:drawer-open">
                 <input id="my-drawer-5" type="checkbox" class="drawer-toggle w-70" />
-                <div class="drawer-side">
+                <div class="drawer-side border-l border-base-200 z-40">
                     <label for="my-drawer-5" aria-label="close sidebar" class="drawer-overlay"></label>
-                    <ul class="menu bg-base-300 min-h-full w-80 p-4">
-                    <li>timer placeholder</li>
-                    </ul>
+                    <div class="bg-base-300 min-h-full w-80 p-6 flex flex-col items-center">
+                        <h2 class="text-[0.65rem] font-bold tracking-[0.2em] text-base-content/40 mb-10 w-full text-center uppercase">Focus Module</h2>
+                        
+                        <div class="bg-base-200 p-1.5 rounded-2xl flex w-full mb-12 shadow-inner border border-base-200">
+                            <button onclick="setPomoMode('work')" id="pomo-work-btn" class="flex-1 text-xs font-bold py-2 rounded-xl bg-base-content text-base-100 shadow-sm transition-all focus:outline-none">FOCUS</button>
+                            <button onclick="setPomoMode('shortBreak')" id="pomo-short-btn" class="flex-1 text-xs font-bold py-2 rounded-xl text-base-content/50 transition-all hover:text-base-content focus:outline-none">SHORT</button>
+                            <button onclick="setPomoMode('longBreak')" id="pomo-long-btn" class="flex-1 text-xs font-bold py-2 rounded-xl text-base-content/50 transition-all hover:text-base-content focus:outline-none">LONG</button>
+                        </div>
+
+                        <div class="relative flex justify-center items-center w-48 h-48 mb-12 mt-2">
+                            <svg class="absolute inset-0 w-full h-full transform -rotate-90">
+                                <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="3" fill="none" class="text-base-200"></circle>
+                                <circle id="pomo-progress" cx="96" cy="96" r="88" stroke="currentColor" stroke-width="6" fill="none" class="text-base-content transition-all duration-1000 ease-linear" stroke-dasharray="553" stroke-dashoffset="0" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="flex flex-col items-center justify-center z-10">
+                                <span class="text-5xl font-extrabold tracking-tighter text-base-content -ml-1" id="pomo-display">25:00</span>
+                                <span class="text-[0.6rem] font-bold tracking-[0.15em] text-base-content/40 mt-1 uppercase" id="pomo-phase-label">Work Phase</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col w-full gap-3 mt-auto mb-6">
+                            <button id="pomo-toggle-btn" onclick="togglePomo()" class="btn btn-primary shadow w-full h-14 rounded-xl flex items-center justify-center gap-2 border-none transition-all duration-300">
+                                <svg id="pomo-start-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+                                  <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
+                                </svg>
+                                <svg id="pomo-pause-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 hidden">
+                                  <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" />
+                                </svg>
+                                <span id="pomo-toggle-text" class="tracking-widest font-bold text-xs uppercase pt-0.5">Initialize</span>
+                            </button>
+                            <button id="pomo-reset-btn" onclick="resetPomo()" class="btn btn-ghost btn-xs text-base-content/30 hover:bg-transparent hover:text-base-content/60 w-full">
+                                <span class="tracking-widest font-bold text-[0.6rem] uppercase">Reset Session</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
