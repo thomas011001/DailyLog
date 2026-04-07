@@ -15,7 +15,7 @@
     <div 
       class="border border-base-300 rounded-xl shadow shadow-base-300 p-6 flex flex-col gap-5"
       hx-get="{% url "core:task-list" day.id %}"
-      hx-trigger="load, task-created"
+      hx-trigger="load, taskCreated from:body"
       hx-swap="innerHTML"
       hx-target="#task-list"
       hx-indicator="#loading-task-list"

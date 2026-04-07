@@ -95,3 +95,75 @@ def login(request):
 def logout(request):
   auth_logout(request)
   return redirect("account:login")
+
+class UpdateProfileForm(forms.ModelForm):
+  class Meta:
+    model = User
+    fields = ['first_name', 'last_name', 'username']
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.fields['first_name'].required = True
+    self.fields['last_name'].required = True
+
+  def clean_username(self):
+    username = self.cleaned_data['username']
+    if ' ' in username:
+      raise forms.ValidationError("Username can't have spaces")
+    if User.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
+      raise forms.ValidationError("This username is already taken, please choose another.")
+    return username
+
+class ChangePasswordForm(forms.Form):
+  current_password = forms.CharField(label="Current Password", widget=forms.PasswordInput())
+  new_password = forms.CharField(label="New Password", widget=forms.PasswordInput(), min_length=8)
+  confirm_password = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(), min_length=8)
+
+  def __init__(self, *args, **kwargs):
+    self.user = kwargs.pop('user', None)
+    super().__init__(*args, **kwargs)
+
+  def clean_current_password(self):
+    current_password = self.cleaned_data.get('current_password')
+    if not self.user.check_password(current_password):
+      raise forms.ValidationError("Incorrect current password.")
+    return current_password
+
+  def clean(self):
+    cleaned_data = super().clean()
+    new_password = cleaned_data.get('new_password')
+    confirm_password = cleaned_data.get('confirm_password')
+
+    if new_password and confirm_password and new_password != confirm_password:
+      raise forms.ValidationError("New passwords do not match.")
+    return cleaned_data
+
+@login_required
+def update_profile(request):
+  if request.method == "POST":
+    form = UpdateProfileForm(request.POST, instance=request.user)
+    if form.is_valid():
+      form.save()
+      return HttpResponse(status=204, headers={'HX-Trigger': 'profileUpdated'})
+    return render(request, "partials/settings_profile_form.html", {"profile_form": form})
+  
+  form = UpdateProfileForm(instance=request.user)
+  return render(request, "partials/settings_profile_form.html", {"profile_form": form})
+
+@login_required
+def change_password(request):
+  if request.method == "POST":
+    form = ChangePasswordForm(request.POST, user=request.user)
+    if form.is_valid():
+      request.user.set_password(form.cleaned_data['new_password'])
+      request.user.save()
+      auth_login(request, request.user) # Keep user logged in
+      return HttpResponse(status=204, headers={'HX-Trigger': 'passwordChanged'})
+    return render(request, "partials/settings_password_form.html", {"password_form": form})
+  
+  form = ChangePasswordForm(user=request.user)
+  return render(request, "partials/settings_password_form.html", {"password_form": form})
+
+@login_required
+def profile_header_get(request):
+  return render(request, "partials/profile_header.html")
