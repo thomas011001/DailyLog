@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "core",
+    "account",
     "tailwind",
     "theme",
     'widget_tweaks',
@@ -134,3 +135,5 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 TAILWIND_APP_NAME = "theme"
+
+LOGIN_URL = 'account:login'

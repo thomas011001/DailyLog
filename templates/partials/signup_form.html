@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
 <form id="signup-form"
-      hx-post="{% url "signup" %}"
+      hx-post="{% url "account:signup" %}"
       hx-target="#signup-form"
       hx-swap="outerHTML">
     {% csrf_token %}

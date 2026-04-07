@@ -1,7 +1,7 @@
 {% load widget_tweaks %}
 <form
   id="creating-day-form"
-  hx-post={% url 'day-create' %}
+  hx-post={% url 'core:day-create' %}
   hx-target="#creating-day-form"
   hx-swap="outerHTML"
   hx-on:day-created="this.reset()"

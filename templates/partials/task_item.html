@@ -2,7 +2,7 @@
   <input type="checkbox" 
          class="checkbox checkbox-primary rounded checkbox-sm"
          {% if task.is_complete %}checked{% endif %}
-         hx-post="{% url 'task-toggle' task.id %}"
+         hx-post="{% url 'core:task-toggle' task.id %}"
          hx-trigger="change"
          hx-target="closest div"
          hx-swap="outerHTML"

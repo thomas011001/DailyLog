@@ -2,12 +2,10 @@ from django.urls import path
 
 from core import views
 
+app_name = 'core'
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("signup", views.signup, name="signup" ),
-    path("login", views.login, name="login"),
-    path("logout", views.logout, name="logout"),
 
     # day
     path("day", views.day_create, name="day-create"),
@@ -19,3 +17,4 @@ urlpatterns = [
     path("day/<int:id>/task", views.task_create, name="task-create"),
     path("task/<int:id>/toggle", views.task_toggle, name="task-toggle")
 ]
+

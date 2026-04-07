@@ -50,7 +50,7 @@
                 <li 
                     id="day-list"
                     class="flex-1 overflow-y-auto block"
-                    hx-get={% url "day-list" %}
+                    hx-get={% url "core:day-list" %}
                     hx-target="#day-list"
                     hx-swap="innerHTML"
                     hx-trigger="load, dayCreated from:body"
