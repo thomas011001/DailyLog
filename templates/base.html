@@ -1,11 +1,12 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div id="sidebar"
-         class="drawer lg:drawer-open"
-         hx-on:day-get="document.getElementById('my-drawer-3').checked = false">
+    <div id="sidebar" class="drawer lg:drawer-open">
+        {# input to controller the show state of the left sidebar #}
         <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content relative h-dvh flex justify-between">
+            {# Page Content #}
             <div class="flex-1">
+                {# LeftSideBarButton #}
                 <label for="my-drawer-3"
                        class="btn btn-primary drawer-button lg:hidden absolute bottom-5 right-5">
                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -18,6 +19,7 @@
                 {% block daycontent %}
                 {% endblock daycontent %}
             </div>
+            {# TimerSideBar #}
             <div class="drawer-end lg:drawer-open">
                 <input id="my-drawer-5" type="checkbox" class="drawer-toggle w-70" />
                 <div class="drawer-side border-l border-base-200 z-40">
@@ -86,6 +88,7 @@
                 </div>
             </div>
         </div>
+        {# MainSideBar #}
         <div class="drawer-side">
             <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
             <ul class="menu bg-base-300 h-screen w-70 p-4 border-r border-base-200 flex flex-col">
@@ -103,6 +106,7 @@
                     </li>
                 </ul>
             </div>
+            {# creating day dialog #}
             <dialog id="creatingdaymodal" class="modal" hx-on:close-dialog="this.close()">
                 <div class="modal-box w-fit">
                     <div class="flex justify-between items-center">
@@ -126,7 +130,8 @@
                     <button>close</button>
                 </form>
             </dialog>
-            <!-- Settings Modal -->
+            
+            {# settings dialog #}
             <dialog id="settingsmodal" class="modal">
                 <div class="modal-box w-11/12 max-w-md flex flex-col max-h-[80vh]">
                     <div class="flex justify-between items-center pb-4 border-b border-base-200">
@@ -172,4 +177,6 @@
                     <button>close</button>
                 </form>
             </dialog>
-        {% endblock body %}
+        </div>
+    </div>
+{% endblock body %}
