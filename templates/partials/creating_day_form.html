@@ -1,50 +1,42 @@
 {% load widget_tweaks %}
-<form
-  id="creating-day-form"
-  hx-post={% url 'core:day-create' %}
-  hx-target="#creating-day-form"
-  hx-swap="outerHTML"
-  hx-on:day-created="this.reset()"
->
-  {% csrf_token %}
-  <fieldset class="fieldset w-80">
-      {% for field in form %}
-          <fieldset class="fieldset">
-              <legend class="fieldset-legend">{{ field.label }}</legend>
-              {{ field|add_class:"input validator w-full" }}
-              {% if field.name == 'date' %}
-              <div class="flex gap-2 mt-2">
-                  <button type="button" class="btn btn-xs btn-outline flex-1" 
-                          onclick="
-                            const d = new Date(); 
-                            this.closest('fieldset').querySelector('input[type=date]').value = d.toLocaleDateString('en-CA');
-                          ">
-                      Today
-                  </button>
-                  <button type="button" class="btn btn-xs btn-outline flex-1" 
-                          onclick="
-                            const d = new Date(); 
-                            d.setDate(d.getDate() + 1); 
-                            this.closest('fieldset').querySelector('input[type=date]').value = d.toLocaleDateString('en-CA');
-                          ">
-                      Tomorrow
-                  </button>
-              </div>
-              {% endif %}
-          </fieldset>
-          {% if field.errors %}
-            <div role="alert" class="alert alert-error">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 shrink-0 stroke-current"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>
-                  {{ field.errors }}</span>
-            </div>
-          {% endif %}
-      {% endfor %}
-      <button type="submit" class="btn btn-primary mt-1">Create</button>
-  </fieldset>
+<form id="creating-day-form"
+      hx-post="{% url 'core:day-create' %}"
+      hx-target="#creating-day-form"
+      hx-swap="outerHTML"
+      hx-on:day-created="this.reset()">
+    {% csrf_token %}
+    <fieldset class="fieldset w-80">
+        {% for field in form %}
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">{{ field.label }}</legend>
+                {{ field|add_class:"input validator w-full" }}
+                {% if field.name == 'date' %}
+                    <div class="flex gap-2 mt-2">
+                        <button type="button"
+                                class="btn btn-xs btn-outline flex-1"
+                                onclick=" const d = new Date(); this.closest('fieldset').querySelector('input[type=date]').value = d.toLocaleDateString('en-CA'); ">
+                            Today
+                        </button>
+                        <button type="button"
+                                class="btn btn-xs btn-outline flex-1"
+                                onclick=" const d = new Date(); d.setDate(d.getDate() + 1); this.closest('fieldset').querySelector('input[type=date]').value = d.toLocaleDateString('en-CA'); ">
+                            Tomorrow
+                        </button>
+                    </div>
+                {% endif %}
+            </fieldset>
+            {% if field.errors %}
+                <div role="alert" class="alert alert-error">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         class="h-6 w-6 shrink-0 stroke-current"
+                         fill="none"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>{{ field.errors }}</span>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mt-1">Create</button>
+    </fieldset>
 </form>

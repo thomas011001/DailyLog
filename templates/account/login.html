@@ -1,12 +1,22 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div class="h-dvh flex justify-center items-center">
-        <div class="">
-            {% include "partials/login_form.html" %}
-            <div class="divider"></div>
-            <div class="flex justify-center items-center gap-1">
-                <p class="text-sm">Don't Have an Accound</p>
-                <a href="{% url 'account:signup' %}" class="btn btn-link p-0">Create New One</a>
+    <div class="min-h-dvh flex justify-center items-center p-10">
+        <div class="flex flex-col items-center gap-5 w-full">
+            <div class="w-full max-w-sm flex flex-col gap-3">
+                <c-brand />
+                <div class="flex flex-col gap-2">
+                    <h1 class="font-bold text-base-content text-3xl">Welcome Back</h1>
+                    <p class="text-base-content/50">Enter your credentials to enter your Dailylog.</p>
+                </div>
+            </div>
+            <div class="border-base-300 shadow shadow-base-300 rounded-box max-w-sm w-full border p-6">
+                <div id="login-container">
+                    {% include "partials/login_form.html" %}
+                    <div class="flex justify-center items-center gap-1 mt-3">
+                        <p class="text-sm">Don't have an account?</p>
+                        <a href="{% url "account:signup" %}" class="btn btn-link p-0">Sign up</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

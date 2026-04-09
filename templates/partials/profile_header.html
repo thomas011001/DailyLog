@@ -1,5 +1,8 @@
-<li hx-get="{% url 'account:profile-header-get' %}" hx-trigger="profileUpdated from:body" hx-swap="outerHTML">
-    <div class="rounded-md bg-base-200 hover:bg-base-200 border-base-300 mb-2 cursor-pointer transition-colors" onclick="settingsmodal.showModal()">
+<li hx-get="{% url 'account:profile-header-get' %}"
+    hx-trigger="profileUpdated from:body"
+    hx-swap="outerHTML">
+    <div class="rounded-md bg-base-200 hover:bg-base-200 border-base-300 mb-2 cursor-pointer transition-colors"
+         onclick="settingsmodal.showModal()">
         <div class="avatar">
             <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp"
                  class="rounded-full w-10" />

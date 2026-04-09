@@ -1,39 +1,22 @@
-<form 
-  id="login-form"
-  hx-post="{% url 'account:login' %}"
-  hx-target="#login-form"
-  hx-swap="outerHTML"
-  >
+<form id="login-form"
+      hx-post="{% url 'account:login' %}"
+      hx-target="#login-form"
+      hx-swap="outerHTML"
+      x-data="{loading: false}"
+      @htmx:before-request="loading = true"
+      @htmx:after-request="loading = false">
     {% load widget_tweaks %}
     {% csrf_token %}
-    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-        <legend class="fieldset-legend">Login</legend>
+    <div class="flex flex-col gap-3">
         {% if form.non_field_errors %}
-            <div role="alert" class="alert alert-error">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         class="h-6 w-6 shrink-0 stroke-current"
-                         fill="none"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{{ form.non_field_errors }}</span>
-                </div>
+            <c-errMsg>
+            {{ form.non_field_errors }}
+            </c-errMsg>
         {% endif %}
-        {% for field in form %}
-            <label class="label">{{ field.label }}</label>
-            {{ field|add_class:"input validator" }}
-            {% if field.errors %}
-                <div role="alert" class="alert alert-error">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         class="h-6 w-6 shrink-0 stroke-current"
-                         fill="none"
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{{ field.errors }}</span>
-                </div>
-            {% endif %}
-        {% endfor %}
-        <button class="btn btn-primary mt-4">Login</button>
-    </fieldset>
+        {% for field in form %}<c-fieldset :field="field" />{% endfor %}
+        <button class="btn btn-primary w-full mt-4" :disabled="loading">
+            <span x-show="!loading">Login</span>
+            <span x-show="loading">Logging in...</span>
+        </button>
+    </div>
 </form>
