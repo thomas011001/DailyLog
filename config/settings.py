@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "theme",
     'widget_tweaks',
     "django_htmx",
+    "django_cotton",
 ]
 if DEBUG: 
     INSTALLED_APPS += ["django_browser_reload"]

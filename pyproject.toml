@@ -12,7 +12,8 @@ dependencies = [
     "django-environ (>=0.13.0,<0.14.0)",
     "django-tailwind[cookiecutter,honcho,reload] (>=4.4.2,<5.0.0)",
     "django-widget-tweaks (>=1.5.1,<2.0.0)",
-    "django-htmx (>=1.27.0,<2.0.0)"
+    "django-htmx (>=1.27.0,<2.0.0)",
+    "django-cotton (>=2.6.2,<3.0.0)"
 ]
 
 
