@@ -1,0 +1,10 @@
+{% load widget_tweaks %}
+<fieldset class="fieldset flex-1">
+    <label class="label text-primary font-bold text-sm">{{ field.label }}</label>
+    {{ field|add_class:"input validator w-full" }}
+    {% if field.errors %}
+        <c-errMsg>
+        {{ field.errors }}
+        </c-errMsg>
+    {% endif %}
+</fieldset>
