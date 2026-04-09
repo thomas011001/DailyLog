@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django import forms
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.urls import reverse
-
+from django.contrib import messages
 
 class SignUpForm(forms.Form):
   first_name = forms.CharField(label="First Name", max_length=50, min_length=2)
@@ -90,6 +90,7 @@ def login(request):
     if form.is_valid():
       auth_login(request, form.user_cache)
       
+      messages.success(request, "You have successfuly logged in.")
       return HttpResponse(status=204, headers={'HX-Redirect': reverse('core:index')})
 
     return render(request, "partials/login_form.html", {
