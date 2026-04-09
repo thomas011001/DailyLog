@@ -13,6 +13,7 @@ class SignUpForm(forms.Form):
   last_name = forms.CharField(label="Last Name", max_length=50, min_length=2)
   username = forms.CharField(label="Username",max_length=50, min_length=3)
   password = forms.CharField(label="Password", widget=forms.PasswordInput(), min_length=8)
+  confirm_password = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(), min_length=8)
 
   def clean_username(self):
     username = self.cleaned_data["username"]
@@ -23,6 +24,15 @@ class SignUpForm(forms.Form):
       raise forms.ValidationError("This username is already taken, please choose another.")
 
     return username
+  
+  def clean(self):
+    cleaned_data = super().clean()
+    password = cleaned_data.get('password')
+    confirm_password = cleaned_data.get('confirm_password')
+
+    if password and confirm_password and password != confirm_password:
+      self.add_error('confirm_password', "Passwords do not match.")    
+    return cleaned_data
 
 def signup(request):
   if request.user.is_authenticated:
