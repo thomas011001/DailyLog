@@ -40,7 +40,7 @@
             });
         </script>
         {% if messages %}
-        <script>
+            <script>
             {% for message in messages %}
                 Swal.fire({
                     icon: "{{ message.tags }}",
@@ -53,7 +53,7 @@
                     timerProgressBar: true,
                 });
             {% endfor %}
-        </script>
+            </script>
         {% endif %}
     </body>
 </html>

@@ -1,0 +1,14 @@
+<li class="flex justify-between gap-2 items-center cursor-pointer group"
+    hx-get="{% url "core:day-get" day.id %}"
+    hx-swap="outerHTML"
+    hx-target="#day-content"
+    hx-indicator="#day-detail-skeleton"
+    hx-push-url="true"
+    x-data="{dayid: '{{ day.id }}'}">
+    <h3 class="flex-1 truncate text-base-content/70 {% if not day.title %}italic{% endif %} text-sm font-bold group-hover:text-base-content transition"
+        :class="activetab.includes('/day/' + dayid) ? 'text-base-content!' : ''">
+        {{ day.title|capfirst|default:"Untitled" }}
+    </h3>
+    {% if day.date|date:"Y-m-d" == today %}<span class="badge badge-sm badge-primary rounded">Today</span>{% endif %}
+    <p class="text-base-content/50 text-xs">{{ day.date|date:"M d"|upper }}</p>
+</li>

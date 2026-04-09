@@ -62,7 +62,7 @@
 
   /* ── base-100 = --background (الخلفية الرئيسية) ── */
   --color-base-100: oklch(1 0 0);
-
+  --color-border: oklch(0.92 0.004 286.32);
   /* ── base-200 = --muted / --secondary (خلفية ثانوية أفتح شوية) ── */
   --color-base-200: oklch(0.97 0 0);
 

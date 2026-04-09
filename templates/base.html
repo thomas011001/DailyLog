@@ -7,83 +7,52 @@
             {# Page Content #}
             <div class="flex-1">
                 {# LeftSideBarButton #}
-                <label for="my-drawer-3"
-                       class="btn btn-primary drawer-button lg:hidden absolute bottom-5 right-5">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                         viewBox="0 0 24 24"
-                         fill="currentColor"
-                         class="size-6">
-                        <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
-                    </svg>
-                </label>
-                {% block daycontent %}
-                {% endblock daycontent %}
+                <div class="absolute bottom-5 right-5 flex flex-col gap-5">
+                    <label for="my-drawer-5" class="btn btn-primary drawer-button lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 24 24"
+                             fill="currentColor"
+                             class="size-6">
+                            <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                        </svg>
+                    </label>
+                    <label for="my-drawer-3" class="btn btn-primary drawer-button lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 24 24"
+                             fill="currentColor"
+                             class="size-6">
+                            <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                        </svg>
+                    </label>
+                </div>
+                <div id="day-detail-container" class="relative h-full">
+                    <style>
+                        #day-detail-skeleton { display: none; }
+                        .htmx-request#day-detail-skeleton { display: block; }
+                        .htmx-request#day-detail-skeleton ~ #day-content-wrapper { display: none; }
+                    </style>
+                    <div id="day-detail-skeleton" class="htmx-indicator w-full">
+                        {% include "partials/day_detail_skeleton.html" %}
+                    </div>
+                    <div id="day-content-wrapper">
+                        {% block daycontent %}
+                        {% endblock daycontent %}
+                    </div>
+                </div>
             </div>
             {# TimerSideBar #}
             <div class="drawer-end lg:drawer-open">
                 <input id="my-drawer-5" type="checkbox" class="drawer-toggle w-70" />
                 <div class="drawer-side border-l border-base-200 z-40">
-                    <label for="my-drawer-5" aria-label="close sidebar" class="drawer-overlay"></label>
                     <div class="bg-base-300 min-h-full w-80 p-6 flex flex-col items-center">
-                        <h2 class="text-[0.65rem] font-bold tracking-[0.2em] text-base-content/40 mb-10 w-full text-center uppercase">
-                            Focus Module
-                        </h2>
-                        <div class="bg-base-200 p-1.5 rounded-2xl flex w-full mb-12 shadow-inner border border-base-200">
-                            <button onclick="setPomoMode('work')"
-                                    id="pomo-work-btn"
-                                    class="flex-1 text-xs font-bold py-2 rounded-xl bg-base-content text-base-100 shadow-sm transition-all focus:outline-none">
-                                FOCUS
-                            </button>
-                            <button onclick="setPomoMode('shortBreak')"
-                                    id="pomo-short-btn"
-                                    class="flex-1 text-xs font-bold py-2 rounded-xl text-base-content/50 transition-all hover:text-base-content focus:outline-none">
-                                SHORT
-                            </button>
-                            <button onclick="setPomoMode('longBreak')"
-                                    id="pomo-long-btn"
-                                    class="flex-1 text-xs font-bold py-2 rounded-xl text-base-content/50 transition-all hover:text-base-content focus:outline-none">
-                                LONG
-                            </button>
-                        </div>
-                        <div class="relative flex justify-center items-center w-48 h-48 mb-12 mt-2">
-                            <svg class="absolute inset-0 w-full h-full transform -rotate-90">
-                                <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="3" fill="none" class="text-base-200"></circle>
-                                <circle id="pomo-progress" cx="96" cy="96" r="88" stroke="currentColor" stroke-width="6" fill="none" class="text-base-content transition-all duration-1000 ease-linear" stroke-dasharray="553" stroke-dashoffset="0" stroke-linecap="round"></circle>
-                            </svg>
-                            <div class="flex flex-col items-center justify-center z-10">
-                                <span class="text-5xl font-extrabold tracking-tighter text-base-content -ml-1"
-                                      id="pomo-display">25:00</span>
-                                <span class="text-[0.6rem] font-bold tracking-[0.15em] text-base-content/40 mt-1 uppercase"
-                                      id="pomo-phase-label">Work Phase</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col w-full gap-3 mt-auto mb-6">
-                            <button id="pomo-toggle-btn"
-                                    onclick="togglePomo()"
-                                    class="btn btn-primary shadow w-full h-14 rounded-xl flex items-center justify-center gap-2 border-none transition-all duration-300">
-                                <svg id="pomo-start-icon"
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     viewBox="0 0 24 24"
-                                     fill="currentColor"
-                                     class="size-4">
-                                    <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
-                                </svg>
-                                <svg id="pomo-pause-icon"
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     viewBox="0 0 24 24"
-                                     fill="currentColor"
-                                     class="size-4 hidden">
-                                    <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" />
-                                </svg>
-                                <span id="pomo-toggle-text"
-                                      class="tracking-widest font-bold text-xs uppercase pt-0.5">Initialize</span>
-                            </button>
-                            <button id="pomo-reset-btn"
-                                    onclick="resetPomo()"
-                                    class="btn btn-ghost btn-xs text-base-content/30 hover:bg-transparent hover:text-base-content/60 w-full">
-                                <span class="tracking-widest font-bold text-[0.6rem] uppercase">Reset Session</span>
-                            </button>
-                        </div>
+                        <label for="my-drawer-5" class="btn btn-primary drawer-button lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 24 24"
+                             fill="currentColor"
+                             class="size-6">
+                            <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
+                        </svg>
+                    </label>
                     </div>
                 </div>
             </div>
@@ -91,92 +60,100 @@
         {# MainSideBar #}
         <div class="drawer-side">
             <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-            <ul class="menu bg-base-300 h-screen w-70 p-4 border-r border-base-200 flex flex-col">
-                <li hx-on:profile-updated="window.location.reload()">
-                    {% include "partials/profile_header.html" %}
-                    <li id="day-list"
-                        class="flex-1 overflow-y-auto block"
-                        hx-get="{% url "core:day-list" %}"
-                        hx-target="#day-list"
-                        hx-swap="innerHTML"
-                        hx-trigger="load, dayCreated from:body"
-                        hx-indicator="#day-list-skeleton">{% include "partials/day_list_skeleton.html" %}</li>
-                    <li class="mt-auto pt-4">
-                        <button class="btn btn-primary" onclick="creatingdaymodal.showModal()">Create Day</button>
-                    </li>
+            <ul class="bg-base-200 h-screen w-70 p-6 border-r border-base-300 flex flex-col gap-8">
+                {# Brand #}
+                <li>
+                    <c-brand />
+                </li>
+                {# Profile Settings #}
+                {% include "partials/profile_header.html" %}
+                {# Days List #}
+                <ul class="flex-1 flex flex-col gap-7 min-h-0 overflow-hidden"
+                    hx-get="{% url "core:day-list" %}"
+                    hx-target="#day-list"
+                    hx-swap="innerHTML"
+                    hx-trigger="load, dayCreated from:body"
+                    hx-indicator="#day-list-skeleton">
+                    <h2 class="font-semibold text-base-content/50 text-xs">PAST DAYS</h2>
+                    <ul id="day-list" class="flex-1 flex flex-col gap-4 overflow-hidden">
+                        {% include "partials/day_list_skeleton.html" %}
+                    </ul>
                 </ul>
-            </div>
-            {# creating day dialog #}
-            <dialog id="creatingdaymodal" class="modal" hx-on:close-dialog="this.close()">
-                <div class="modal-box w-fit">
-                    <div class="flex justify-between items-center">
-                        <h1 class="font-bold">Create New Day</h1>
-                        <form method="dialog">
-                            <button>
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke-width="1.5"
-                                     stroke="currentColor"
-                                     class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
-                    {% include "partials/creating_day_form.html" %}
+                {# Creating Day Button #}
+                <li class="mt-auto pt-2">
+                    <button class="btn btn-primary w-full" onclick="creatingdaymodal.showModal()">Create Day</button>
+                </li>
+            </ul>
+        </div>
+        {# creating day dialog #}
+        <dialog id="creatingdaymodal" class="modal" hx-on:close-dialog="this.close()">
+            <div class="modal-box w-fit">
+                <div class="flex justify-between items-center">
+                    <h1 class="font-bold">Create New Day</h1>
+                    <form method="dialog">
+                        <button>
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke-width="1.5"
+                                 stroke="currentColor"
+                                 class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </form>
                 </div>
-                <form method="dialog" class="modal-backdrop">
-                    <button>close</button>
-                </form>
-            </dialog>
-            
-            {# settings dialog #}
-            <dialog id="settingsmodal" class="modal">
-                <div class="modal-box w-11/12 max-w-md flex flex-col max-h-[80vh]">
-                    <div class="flex justify-between items-center pb-4 border-b border-base-200">
-                        <h1 class="font-bold text-xl">Settings</h1>
-                        <form method="dialog">
-                            <button class="btn btn-ghost btn-circle btn-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                     fill="none"
-                                     viewBox="0 0 24 24"
-                                     stroke-width="1.5"
-                                     stroke="currentColor"
-                                     class="size-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </form>
-                    </div>
-                    <div class="flex-1 pt-6 overflow-y-auto">
-                        <div class="flex flex-col gap-8">
-                            <div class="flex-1"
-                                 hx-get="{% url 'account:update-profile' %}"
-                                 hx-trigger="load"
-                                 hx-swap="innerHTML">
-                                <span class="loading loading-spinner text-primary"></span> Loading profile...
-                            </div>
-                            <div class="divider"></div>
-                            <div class="flex-1"
-                                 hx-get="{% url 'account:change-password' %}"
-                                 hx-trigger="load"
-                                 hx-swap="innerHTML">
-                                <span class="loading loading-spinner text-primary"></span> Loading password form...
-                            </div>
+                {% include "partials/creating_day_form.html" %}
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
+        {# settings dialog #}
+        <dialog id="settingsmodal" class="modal">
+            <div class="modal-box w-11/12 max-w-md flex flex-col max-h-[80vh]">
+                <div class="flex justify-between items-center pb-4 border-b border-base-200">
+                    <h1 class="font-bold text-xl">Settings</h1>
+                    <form method="dialog">
+                        <button class="btn btn-ghost btn-circle btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke-width="1.5"
+                                 stroke="currentColor"
+                                 class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="flex-1 pt-6 overflow-y-auto">
+                    <div class="flex flex-col gap-8">
+                        <div class="flex-1"
+                             hx-get="{% url 'account:update-profile' %}"
+                             hx-trigger="load"
+                             hx-swap="innerHTML">
+                            <span class="loading loading-spinner text-primary"></span> Loading profile...
+                        </div>
+                        <div class="divider"></div>
+                        <div class="flex-1"
+                             hx-get="{% url 'account:change-password' %}"
+                             hx-trigger="load"
+                             hx-swap="innerHTML">
+                            <span class="loading loading-spinner text-primary"></span> Loading password form...
                         </div>
                     </div>
-                    <div class="mt-auto pt-6 border-t border-base-200 flex justify-between items-center bg-base-100 z-10 sticky bottom-0">
-                        <a href="{% url 'account:logout' %}" class="btn btn-error btn-outline">Logout</a>
-                        <form method="dialog">
-                            <button class="btn">Close</button>
-                        </form>
-                    </div>
                 </div>
-                <form method="dialog" class="modal-backdrop">
-                    <button>close</button>
-                </form>
-            </dialog>
-        </div>
+                <div class="mt-auto pt-6 border-t border-base-200 flex justify-between items-center bg-base-100 z-10 sticky bottom-0">
+                    <a href="{% url 'account:logout' %}" class="btn btn-error btn-outline">Logout</a>
+                    <form method="dialog">
+                        <button class="btn">Close</button>
+                    </form>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>close</button>
+            </form>
+        </dialog>
     </div>
 {% endblock body %}
