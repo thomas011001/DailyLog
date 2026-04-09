@@ -134,6 +134,10 @@ def day_get(request, id):
 
   return render(request, "core/day.html", {"day": day, "form": CreatingDayForm(), "task_form": CreateTaskForm()})
 
+def day_header(request, id):
+  day = get_object_or_404(Day, id=id, owner=request.user)
+  return render(request, "cotton/dayHeader.html", {"day": day})
+
 def task_list(request, id):
   tasks = Task.objects.filter(day_id=id)
   return render(request, "partials/task_list.html", {"tasks": tasks})

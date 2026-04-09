@@ -1,10 +1,4 @@
 {% extends "base.html" %}
 {% block daycontent %}
-    <div id="day-content"
-         hx-get="{% url "core:day-get" day.id %}"
-         hx-trigger="load"
-         hx-swap="outerHTML"
-         hx-indicator="#day-detail-skeleton">
-        {% include "partials/day_detail_skeleton.html" %}
-    </div>
+    {% include "partials/day_get.html" %}
 {% endblock daycontent %}

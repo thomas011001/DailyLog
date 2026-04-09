@@ -2,9 +2,9 @@
     hx-get="{% url "core:day-get" day.id %}"
     hx-swap="outerHTML"
     hx-target="#day-content"
-    hx-indicator="#day-detail-skeleton"
     hx-push-url="true"
-    x-data="{dayid: '{{ day.id }}'}">
+    x-data="{dayid: '{{ day.id }}'}"
+    @click="$refs.leftSidebar.checked = false">
     <h3 class="flex-1 truncate text-base-content/70 {% if not day.title %}italic{% endif %} text-sm font-bold group-hover:text-base-content transition"
         :class="activetab.includes('/day/' + dayid) ? 'text-base-content!' : ''">
         {{ day.title|capfirst|default:"Untitled" }}

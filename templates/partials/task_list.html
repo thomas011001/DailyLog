@@ -22,9 +22,7 @@
         <p>There's No Tasks</p>
     </div>
 {% else %}
-    <div class="flex flex-col gap-3">
         {% for task in tasks %}
             {% include "partials/task_item.html" %}
         {% endfor %}
-    </div>
 {% endif %}

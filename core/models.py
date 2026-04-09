@@ -16,3 +16,35 @@ class Task(models.Model):
 
   def __str__(self) -> str:
     return f"{self.title}: {self.is_complete}"
+
+class Step(models.Model):
+    WORK = 'work'
+    BREAK = 'break'
+    TYPE_CHOICES = [
+        (WORK, 'Work'),
+        (BREAK, 'Break'),
+    ]
+
+    day         = models.ForeignKey(Day, on_delete=models.CASCADE, related_name='steps')
+    type        = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    order       = models.PositiveIntegerField()
+    is_complete = models.BooleanField(default=False)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('day', 'order')
+        ordering = ['order']
+
+    def __str__(self):
+        return f"Day {self.day.date} | Step {self.order} | {self.type}"
+
+
+class WorkSession(models.Model):
+    step        = models.ForeignKey(Step, on_delete=models.CASCADE, related_name='sessions')
+    is_complete = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"Step {self.step.order} | Session {self.order}"

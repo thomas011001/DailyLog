@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div id="sidebar" class="drawer lg:drawer-open">
+    <div x-data id="sidebar" class="drawer lg:drawer-open">
         {# input to controller the show state of the left sidebar #}
-        <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+        <input x-ref="leftSidebar" id="my-drawer-3" type="checkbox" class="drawer-toggle" />
         <div class="drawer-content relative h-dvh flex justify-between">
             {# Page Content #}
             <div class="flex-1">
@@ -25,20 +25,8 @@
                         </svg>
                     </label>
                 </div>
-                <div id="day-detail-container" class="relative h-full">
-                    <style>
-                        #day-detail-skeleton { display: none; }
-                        .htmx-request#day-detail-skeleton { display: block; }
-                        .htmx-request#day-detail-skeleton ~ #day-content-wrapper { display: none; }
-                    </style>
-                    <div id="day-detail-skeleton" class="htmx-indicator w-full">
-                        {% include "partials/day_detail_skeleton.html" %}
-                    </div>
-                    <div id="day-content-wrapper">
-                        {% block daycontent %}
-                        {% endblock daycontent %}
-                    </div>
-                </div>
+                {% block daycontent %}
+                {% endblock daycontent %}
             </div>
             {# TimerSideBar #}
             <div class="drawer-end lg:drawer-open">
