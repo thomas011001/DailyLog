@@ -47,7 +47,11 @@
     {# Step Section #}
     <div class="rounded-xl bg-base-200 border border-base-300 p-8 flex flex-col gap-5 shadow shadow-base-300">
         <h1 class="font-bold text-2xl">Day Flow</h1>
-        <ul class="steps steps-vertical">
+        <ul class="steps steps-vertical"
+            hx-get="{% url "core:step-list" day.id %}"
+            hx-trigger="load, stepCreated from:body"
+            hx-swap="innerHTML"
+            hx-target="this">
             <li class="step"><div class="skeleton w-60 h-10"></div></li>
             <li class="step"><div class="skeleton w-80 h-10"></div></li>
             <li class="step"><div class="skeleton w-40 h-10"></div></li>
@@ -57,7 +61,7 @@
             + ADD STEP
         </button>
     </div>
-    <dialog id="createStepDialog" class="modal" hx-on:close-dialog="this.close()">
+    <dialog id="createtaskdialog" class="modal" hx-on:close-dialog="this.close()">
         <div class="modal-box w-fit">
             <div class="flex justify-between items-center">
                 <h1 class="font-bold">Create New Task</h1>
@@ -103,6 +107,35 @@
                  hx-swap="innerHTML">
                 <span class="loading loading-spinner text-primary"></span> Loading...
             </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+    <dialog id="createStepDialog" class="modal" hx-on:close-dialog="this.close()">
+        <div class="modal-box w-fit"
+             x-data="{activetab: 'break'}">
+            <div class="flex justify-between items-center">
+                <h1 class="font-bold">Create New Step</h1>
+                <form method="dialog">
+                    <button>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke-width="1.5"
+                             stroke="currentColor"
+                             class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            <div class="tabs tabs-box">
+                <input name="stepType" @click="activetab = 'break'" type="radio" aria-label="Break" class="tab flex-1" checked>
+                <input name="stepType" @click="activetab = 'work'" type="radio" aria-label="Work" class="tab flex-1">
+            </div>
+            {% include "partials/create_break_step_form.html" %}
+            {% include "partials/create_work_step_form.html" %}
         </div>
         <form method="dialog" class="modal-backdrop">
             <button>close</button>

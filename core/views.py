@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django import forms
 from django.urls import reverse
 
-from core.models import Day, Task
+from core.models import Day, Task, Step, WorkSession
 
 class EditingDayForm(forms.ModelForm):
   class Meta:
@@ -46,6 +46,12 @@ class CreatingDayForm(forms.Form):
 
 class CreateTaskForm(forms.Form):
   title = forms.CharField(min_length=2)
+
+class CreateBreakStep(forms.Form):
+  description = forms.CharField(label="Description",min_length=2)
+
+class CreateWorkStep(forms.Form):
+  sessions_counter = forms.IntegerField(label="Number of Sessions",min_value=1)
 
 @login_required
 def index(request):
@@ -128,11 +134,11 @@ def day_delete(request, id):
 def day_get(request, id):
   day = get_object_or_404(Day, id=id, owner=request.user)
   if request.htmx:
-    response = render(request, 'partials/day_get.html', {'day': day, "task_form": CreateTaskForm()})
+    response = render(request, 'partials/day_get.html', {'day': day, "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
     response["HX-Trigger"] = "dayGet"
     return response
 
-  return render(request, "core/day.html", {"day": day, "form": CreatingDayForm(), "task_form": CreateTaskForm()})
+  return render(request, "core/day.html", {"day": day, "form": CreatingDayForm(), "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
 
 def day_header(request, id):
   day = get_object_or_404(Day, id=id, owner=request.user)
@@ -178,3 +184,96 @@ def task_delete(request, id):
     task = get_object_or_404(Task, pk=id, day__owner=request.user)
     task.delete()
     return HttpResponse("")
+
+
+@require_POST
+@login_required
+def break_step_create(request, id):
+  form = CreateBreakStep(request.POST)
+  if form.is_valid():
+    data = form.cleaned_data
+
+    new_step = Step(day_id=id, type=Step.BREAK, description=data["description"])
+    new_step.save()
+  
+    return HttpResponse(
+                  status=204,
+                  headers={
+                      "HX-Trigger": json.dumps({
+                          "closeDialog": None,
+                          "stepCreated": None, 
+                      }),
+                  }
+               ) 
+  
+  return render(request, "partials/create_break_step_form.html", {"day": day, "form": form})
+
+@require_POST
+@login_required
+def work_step_create(request, id):
+  form = CreateWorkStep(request.POST)
+  if form.is_valid():
+    data = form.cleaned_data
+
+    new_step = Step(day_id=id, type=Step.WORK)
+    new_step.save()
+    work_session = [WorkSession(step=new_step) for _ in range(data["sessions_counter"])]
+    WorkSession.objects.bulk_create(work_session)
+  
+    return HttpResponse(
+                  status=204,
+                  headers={
+                      "HX-Trigger": json.dumps({
+                          "closeDialog": None,
+                          "stepCreated": None, 
+                      }),
+                  }
+               ) 
+  
+  return render(request, "partials/create_work_step_form.html", {"day": day, "form": form})
+
+def step_list(request, id):
+  steps = Step.objects.prefetch_related("sessions").filter(day_id=id)
+  return render(request, "partials/step_list.html", {"steps": steps})
+    
+
+@require_POST
+@login_required
+def step_delete(request, id):
+    step = get_object_or_404(Step, pk=id, day__owner=request.user)
+    day_id = step.day_id
+    step.delete()
+    # After deleting, we might want to refresh the list or just return nothing if handled by htmx delete
+    return HttpResponse("")
+
+@require_POST
+@login_required
+def step_toggle(request, id):
+    step = get_object_or_404(Step, pk=id, day__owner=request.user)
+    step.is_complete = not step.is_complete
+    step.save()
+    
+    # We need to render the step list again or just the single step?
+    # Since step_list.html iterates over steps, rendering it again is easier if we have the day_id
+    steps = Step.objects.prefetch_related("sessions").filter(day_id=step.day_id)
+    return render(request, "partials/step_list.html", {"steps": steps})
+
+@require_POST
+@login_required
+def session_toggle(request, id):
+    session = get_object_or_404(WorkSession, pk=id, step__day__owner=request.user)
+    session.is_complete = not session.is_complete
+    session.save()
+    
+    # Refresh the step list to show updated session state
+    steps = Step.objects.prefetch_related("sessions").filter(day_id=session.step.day_id)
+    return render(request, "partials/step_list.html", {"steps": steps})
+
+@require_POST
+@login_required
+def session_create(request, id):
+    step = get_object_or_404(Step, pk=id, day__owner=request.user)
+    WorkSession.objects.create(step=step)
+    
+    steps = Step.objects.prefetch_related("sessions").filter(day_id=step.day_id)
+    return render(request, "partials/step_list.html", {"steps": steps})

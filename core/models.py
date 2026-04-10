@@ -31,6 +31,12 @@ class Step(models.Model):
     is_complete = models.BooleanField(default=False)
     description = models.TextField(blank=True)
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            last = Step.objects.filter(day=self.day).order_by('order').last()
+            self.order = (last.order + 1) if last else 1
+        super().save(*args, **kwargs)
+
     class Meta:
         unique_together = ('day', 'order')
         ordering = ['order']
@@ -44,4 +50,4 @@ class WorkSession(models.Model):
     is_complete = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Step {self.step.order} | Session {self.order}"
+        return f"Step {self.step.order} | Session {self.pk}"
