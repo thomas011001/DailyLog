@@ -43,8 +43,5 @@ class WorkSession(models.Model):
     step        = models.ForeignKey(Step, on_delete=models.CASCADE, related_name='sessions')
     is_complete = models.BooleanField(default=False)
 
-    class Meta:
-        ordering = ['order']
-
     def __str__(self):
         return f"Step {self.step.order} | Session {self.order}"
