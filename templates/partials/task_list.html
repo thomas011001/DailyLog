@@ -22,7 +22,7 @@
         <p>There's No Tasks</p>
     </div>
 {% else %}
-        {% for task in tasks %}
-            {% include "partials/task_item.html" %}
-        {% endfor %}
+    {% for task in tasks %}
+        {% include "partials/task_item.html" %}
+    {% endfor %}
 {% endif %}

@@ -1,8 +1,8 @@
 <div id="day-content" class="p-10 flex flex-col gap-8">
-    {# Header #}
+    {# Header Section #}
     <div class="flex flex-col w-full gap-5"
          hx-get="{% url "core:day-header" day.id %}"
-         hx-trigger="load, dayUpdated from:body"    
+         hx-trigger="load, dayUpdated from:body"
          hx-swap="innerHTML"
          hx-target="this">
         <div class="skeleton max-w-100 w-full h-12"></div>
@@ -11,8 +11,7 @@
             <div class="skeleton h-6 w-6 rounded-full"></div>
         </div>
     </div>
-
-    {# Tasks #}
+    {# Task Section #}
     <div class="border border-base-300 rounded-xl shadow shadow-base-300 p-6 flex flex-col gap-5">
         <div class="flex flex-col gap-2">
             <div class="flex justify-between">
@@ -21,11 +20,12 @@
             </div>
             <div class="divider before:h-px after:h-px my-0 "></div>
         </div>
-        <div id="task-list" class="flex flex-col gap-5"
-        hx-get="{% url "core:task-list" day.id %}"
-         hx-trigger="load, taskCreated from:body"
-         hx-swap="innerHTML"
-         hx-target="this">
+        <div id="task-list"
+             class="flex flex-col gap-5"
+             hx-get="{% url "core:task-list" day.id %}"
+             hx-trigger="load, taskCreated from:body"
+             hx-swap="innerHTML"
+             hx-target="this">
             <div class="flex gap-3">
                 <div class="skeleton h-8 w-8"></div>
                 <div class="skeleton h-8 max-w-100 w-full"></div>
@@ -44,7 +44,20 @@
             + ADD TASK
         </button>
     </div>
-    <dialog id="createtaskdialog" class="modal" hx-on:close-dialog="this.close()">
+    {# Step Section #}
+    <div class="rounded-xl bg-base-200 border border-base-300 p-8 flex flex-col gap-5 shadow shadow-base-300">
+        <h1 class="font-bold text-2xl">Day Flow</h1>
+        <ul class="steps steps-vertical">
+            <li class="step"><div class="skeleton w-60 h-10"></div></li>
+            <li class="step"><div class="skeleton w-80 h-10"></div></li>
+            <li class="step"><div class="skeleton w-40 h-10"></div></li>
+        </ul>
+        <button onclick="createStepDialog.showModal()"
+                class="btn btn-dash border-base-content/50 text-base-content/50 hover:text-primary hvoer:border-primary">
+            + ADD STEP
+        </button>
+    </div>
+    <dialog id="createStepDialog" class="modal" hx-on:close-dialog="this.close()">
         <div class="modal-box w-fit">
             <div class="flex justify-between items-center">
                 <h1 class="font-bold">Create New Task</h1>

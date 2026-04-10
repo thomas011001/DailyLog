@@ -2,10 +2,13 @@
 {% block body %}
     <div x-data id="sidebar" class="drawer lg:drawer-open">
         {# input to controller the show state of the left sidebar #}
-        <input x-ref="leftSidebar" id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+        <input x-ref="leftSidebar"
+               id="my-drawer-3"
+               type="checkbox"
+               class="drawer-toggle" />
         <div class="drawer-content relative h-dvh flex justify-between">
             {# Page Content #}
-            <div class="flex-1">
+            <div class="flex-1 overflow-y-auto">
                 {# LeftSideBarButton #}
                 <div class="absolute bottom-5 right-5 flex flex-col gap-5">
                     <label for="my-drawer-5" class="btn btn-primary drawer-button lg:hidden">
