@@ -114,7 +114,8 @@
     </dialog>
     <dialog id="createStepDialog" class="modal" hx-on:close-dialog="this.close()">
         <div class="modal-box w-fit"
-             x-data="{activetab: 'break'}">
+             x-cloak
+             x-data="{stepType{{dayid}}: 'break'}">
             <div class="flex justify-between items-center">
                 <h1 class="font-bold">Create New Step</h1>
                 <form method="dialog">
@@ -131,8 +132,8 @@
                 </form>
             </div>
             <div class="tabs tabs-box">
-                <input name="stepType" @click="activetab = 'break'" type="radio" aria-label="Break" class="tab flex-1" checked>
-                <input name="stepType" @click="activetab = 'work'" type="radio" aria-label="Work" class="tab flex-1">
+                <input x-model="stepType{{dayid}}" value="break" name="stepType{{dayid}}" type="radio" aria-label="Break" class="tab flex-1">
+                <input x-model="stepType{{dayid}}" value="work" name="stepType{{dayid}}" type="radio" aria-label="Work" class="tab flex-1">
             </div>
             {% include "partials/create_break_step_form.html" %}
             {% include "partials/create_work_step_form.html" %}

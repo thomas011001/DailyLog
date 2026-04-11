@@ -1,6 +1,7 @@
 {% load widget_tweaks %}
 <form id="create-break-step-form"
-      x-show="activetab == 'break'"
+      x-cloak
+      x-show="stepType{{dayid}} == 'break'"
       hx-post="{% url "core:break-step-create" dayid %}"
       hx-target="#create-break-step-form"
       hx-swap="outerHTML"

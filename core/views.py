@@ -205,7 +205,7 @@ def break_step_create(request, id):
                   }
                ) 
   
-  return render(request, "partials/create_break_step_form.html", {"day": day, "form": form})
+  return render(request, "partials/create_break_step_form.html", {"form": form, "dayid": id})
 
 @require_POST
 @login_required
@@ -229,7 +229,7 @@ def work_step_create(request, id):
                   }
                ) 
   
-  return render(request, "partials/create_work_step_form.html", {"day": day, "form": form})
+  return render(request, "partials/create_work_step_form.html", {"dayid": id, "form": form})
 
 def step_list(request, id):
   steps = Step.objects.prefetch_related("sessions").filter(day_id=id)

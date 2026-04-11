@@ -1,6 +1,7 @@
 {% load widget_tweaks %}
 <form id="create-work-step-form"
-      x-show="activetab == 'work'"
+      x-cloak
+      x-show="stepType{{dayid}} == 'work'"
       hx-post="{% url 'core:work-step-create' dayid %}"
       hx-target="#create-work-step-form"
       hx-swap="outerHTML"
