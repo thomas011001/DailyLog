@@ -1,7 +1,7 @@
 <div id="day-content" class="p-10 flex flex-col gap-8">
     {# Header Section #}
     <div class="flex flex-col w-full gap-5"
-         hx-get="{% url "core:day-header" day.id %}"
+         hx-get="{% url "core:day-header" dayid %}"
          hx-trigger="load, dayUpdated from:body"
          hx-swap="innerHTML"
          hx-target="this">
@@ -22,7 +22,7 @@
         </div>
         <div id="task-list"
              class="flex flex-col gap-5"
-             hx-get="{% url "core:task-list" day.id %}"
+             hx-get="{% url "core:task-list" dayid %}"
              hx-trigger="load, taskCreated from:body"
              hx-swap="innerHTML"
              hx-target="this">
@@ -48,7 +48,7 @@
     <div class="rounded-xl bg-base-200 border border-base-300 p-8 flex flex-col gap-5 shadow shadow-base-300">
         <h1 class="font-bold text-2xl">Day Flow</h1>
         <ul class="steps steps-vertical"
-            hx-get="{% url "core:step-list" day.id %}"
+            hx-get="{% url "core:step-list" dayid %}"
             hx-trigger="load, stepCreated from:body"
             hx-swap="innerHTML"
             hx-target="this">
@@ -102,7 +102,7 @@
                 </form>
             </div>
             <div class="mt-4"
-                 hx-get="{% url 'core:day-update' day.id %}"
+                 hx-get="{% url 'core:day-update' dayid %}"
                  hx-trigger="load"
                  hx-swap="innerHTML">
                 <span class="loading loading-spinner text-primary"></span> Loading...

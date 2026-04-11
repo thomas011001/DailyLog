@@ -1,7 +1,7 @@
 {% load widget_tweaks %}
 <form id="create-work-step-form"
       x-show="activetab == 'work'"
-      hx-post="{% url 'core:work-step-create' day.id %}"
+      hx-post="{% url 'core:work-step-create' dayid %}"
       hx-target="#create-work-step-form"
       hx-swap="outerHTML"
       hx-on:step-created="this.reset()">

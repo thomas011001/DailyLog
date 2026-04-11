@@ -7,19 +7,17 @@
                     <span class="text-base-content text-md font-bold cursor-pointer hover:text-primary transition-colors"
                           hx-post="{% url 'core:step-toggle' step.id %}"
                           hx-target="closest ul"
-                          hx-swap="innerHTML">
-                        {{ step.description|upper }}
-                    </span>
+                          hx-swap="innerHTML">{{ step.description|upper }}</span>
                 {% else %}
                     <div class="flex items-center gap-3">
                         {% for session in step.sessions.all %}
-                            <input type="checkbox" 
-                                   class="checkbox checkbox-md checkbox-primary cursor-pointer" 
+                            <input type="checkbox"
+                                   class="checkbox checkbox-md checkbox-primary cursor-pointer"
                                    {% if session.is_complete %}checked{% endif %}
                                    hx-post="{% url 'core:session-toggle' session.id %}"
                                    hx-target="closest ul"
                                    hx-swap="innerHTML"
-                                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'/>
+                                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' />
                         {% endfor %}
                         <button class="btn btn-ghost btn-xs btn-circle opacity-0 group-hover:opacity-100 transition-opacity text-primary"
                                 hx-post="{% url 'core:session-create' step.id %}"
@@ -27,14 +25,18 @@
                                 hx-swap="innerHTML"
                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                                 title="Add Session">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke-width="3"
+                                 stroke="currentColor"
+                                 class="size-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                         </button>
                     </div>
                 {% endif %}
             </div>
-
             <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
                 <button class="btn btn-ghost btn-xs btn-circle text-base-content/50 hover:text-primary"
                         hx-post="{% url 'core:step-toggle' step.id %}"
@@ -42,7 +44,12 @@
                         hx-swap="innerHTML"
                         title="Toggle Step"
                         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="2"
+                         stroke="currentColor"
+                         class="size-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                     </svg>
                 </button>
@@ -53,7 +60,12 @@
                         hx-confirm="Delete this step?"
                         hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                         title="Delete Step">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="2"
+                         stroke="currentColor"
+                         class="size-4">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.34 12m-4.72 0-.34-12M4.5 18.75A2.25 2.25 0 0 0 6.75 21h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 16.5 4.5h-9a2.25 2.25 0 0 0-2.25 2.25V18.75Z" />
                     </svg>
                 </button>
@@ -63,7 +75,12 @@
 {% empty %}
     <div class="flex flex-col items-center justify-center p-8 text-center bg-base-100/50 rounded-xl border border-dashed border-base-300 gap-3">
         <div class="p-3 bg-base-200 rounded-full text-base-content/30">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke-width="1.5"
+                 stroke="currentColor"
+                 class="size-8">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
             </svg>
         </div>

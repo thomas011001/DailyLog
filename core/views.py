@@ -132,13 +132,12 @@ def day_delete(request, id):
     )
     
 def day_get(request, id):
-  day = get_object_or_404(Day, id=id, owner=request.user)
   if request.htmx:
-    response = render(request, 'partials/day_get.html', {'day': day, "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
+    response = render(request, 'partials/day_get.html', {'dayid':id, "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
     response["HX-Trigger"] = "dayGet"
     return response
 
-  return render(request, "core/day.html", {"day": day, "form": CreatingDayForm(), "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
+  return render(request, "core/day.html", {"dayid":id, "form": CreatingDayForm(), "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
 
 def day_header(request, id):
   day = get_object_or_404(Day, id=id, owner=request.user)

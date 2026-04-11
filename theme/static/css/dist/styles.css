@@ -2150,12 +2150,6 @@
       --size: calc(var(--size-selector, 0.25rem) * 5);
     }
   }
-  @layer daisyui.l1.l2 {
-    .checkbox-xl {
-      padding: 0.375rem;
-      --size: calc(var(--size-selector, 0.25rem) * 8);
-    }
-  }
   .p-0 {
     padding: calc(var(--spacing) * 0);
   }
