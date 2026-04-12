@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from .views import SignUpForm, LoginForm
+from .views import SignUpForm, LoginForm, UpdateProfileForm, ChangePasswordForm
 
 class SignUpViewTest(TestCase):
     def test_get_signup_page(self):
@@ -163,5 +163,146 @@ class LoginViewTest(TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTemplateUsed(res, "partials/login_form.html")
         self.assertFalse(self.client.session.get('_auth_user_id'))
+
+class LogoutViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="password")
+
+    def test_unlogged_user_cannot_access(self):
+        res = self.client.get(reverse("account:logout"))
+        self.assertEqual(res.status_code, 302)
+        self.assertIn(reverse("account:login"), res.url)
+
+    def test_logout_redirects_to_login(self):
+        self.client.force_login(self.user)
+        res = self.client.get(reverse("account:logout"))
+        self.assertEqual(res.status_code, 302)
+        self.assertRedirects(res, reverse("account:login"))
+        self.assertFalse(self.client.session.get('_auth_user_id'))
+
+class UpdateProfileFormTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", first_name="Test", last_name="User")
+        self.other_user = User.objects.create_user(username="otheruser", password="password")
+
+    def test_username_no_spaces(self):
+        form = UpdateProfileForm({
+            "first_name": "Test",
+            "last_name": "User",
+            "username": "test user"
+        }, instance=self.user)
+        self.assertFalse(form.is_valid())
+        self.assertIn("Username can't have spaces", form.errors["username"])
+
+    def test_username_unique(self):
+        form = UpdateProfileForm({
+            "first_name": "Test",
+            "last_name": "User",
+            "username": "otheruser"
+        }, instance=self.user)
+        self.assertFalse(form.is_valid())
+        self.assertIn("This username is already taken, please choose another.", form.errors["username"])
+
+    def test_valid_profile_update(self):
+        form = UpdateProfileForm({
+            "first_name": "Updated",
+            "last_name": "Name",
+            "username": "updatedusername"
+        }, instance=self.user)
+        self.assertTrue(form.is_valid())
+
+class UpdateProfileViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="password")
+
+    def test_unlogged_user_cannot_access(self):
+        res = self.client.get(reverse("account:update-profile"))
+        self.assertEqual(res.status_code, 302)
+        self.assertIn(reverse("account:login"), res.url)
+
+    def test_valid_post_update_profile(self):
+        self.client.force_login(self.user)
+        res = self.client.post(reverse("account:update-profile"), {
+            "first_name": "Updated",
+            "last_name": "Name",
+            "username": "updatedusername"
+        })
+        self.assertEqual(res.status_code, 204)
+        self.assertEqual(res.headers.get('HX-Trigger'), 'profileUpdated')
+        
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, "updatedusername")
+
+    def test_invalid_post_update_profile(self):
+        self.client.force_login(self.user)
+        res = self.client.post(reverse("account:update-profile"), {
+            "first_name": "Updated",
+            "last_name": "Name",
+            "username": "invalid username"
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "partials/settings_profile_form.html")
+
+class ChangePasswordFormTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="oldpassword")
+
+    def test_password_mismatch(self):
+        form = ChangePasswordForm({
+            "current_password": "oldpassword",
+            "new_password": "newpassword123",
+            "confirm_password": "differentpassword"
+        }, user=self.user)
+        self.assertFalse(form.is_valid())
+        self.assertIn("New passwords do not match.", form.errors["__all__"])
+
+    def test_incorrect_current_password(self):
+        form = ChangePasswordForm({
+            "current_password": "wrongpassword",
+            "new_password": "newpassword123",
+            "confirm_password": "newpassword123"
+        }, user=self.user)
+        self.assertFalse(form.is_valid())
+        self.assertIn("Incorrect current password.", form.errors["current_password"])
+
+    def test_valid_case(self):
+        form = ChangePasswordForm({
+            "current_password": "oldpassword",
+            "new_password": "newpassword123",
+            "confirm_password": "newpassword123"
+        }, user=self.user)
+        self.assertTrue(form.is_valid())
+
+class ChangePasswordViewTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="oldpassword")
+
+    def test_unlogged_user_cannot_access(self):
+        res = self.client.get(reverse("account:change-password"))
+        self.assertEqual(res.status_code, 302)
+        self.assertIn(reverse("account:login"), res.url)
+
+    def test_invalid_post_change_password(self):
+        self.client.force_login(self.user)
+        res = self.client.post(reverse("account:change-password"), {
+            "current_password": "wrongpassword",
+            "new_password": "newpassword123",
+            "confirm_password": "newpassword123"
+        })
+        self.assertEqual(res.status_code, 200)
+        self.assertTemplateUsed(res, "partials/settings_password_form.html")
+
+    def test_valid_post_change_password(self):
+        self.client.force_login(self.user)
+        res = self.client.post(reverse("account:change-password"), {
+            "current_password": "oldpassword",
+            "new_password": "newpassword123",
+            "confirm_password": "newpassword123"
+        })
+        self.assertEqual(res.status_code, 204)
+        self.assertEqual(res.headers.get('HX-Trigger'), 'passwordChanged')
+        
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("newpassword123"))
         
    
