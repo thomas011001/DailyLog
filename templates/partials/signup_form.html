@@ -19,9 +19,15 @@
                 {% if field.name == "first_name" or field.name == "last_name" %}<c-fieldset :field="field" />{% endif %}
             {% endfor %}
         </div>
+        {# Username Field #}
+        {% for field in form %}
+            {% if field.name == "username" %}
+                <c-fieldset :field="field" />
+            {% endif %}
+        {% endfor %}
         {# The Rest of Other Fields #}
         {% for field in form %}
-            {% if field.name != "first_name" and field.name != "last_name" %}<c-fieldset :field="field" />{% endif %}
+            {% if field.name == "password" or field.name == "confirm_password" %}<c-passField :field="field" />{% endif %}
         {% endfor %}
         <button class="btn btn-primary w-full mt-4" :disabled="loading">
             <span x-show="!loading">Create An Account</span>

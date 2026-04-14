@@ -166,7 +166,7 @@ def task_create(request, id):
                   }
                ) 
   
-  return render(request, "partials/create_task_form.html", {"day": day, "task_form": form})
+  return render(request, "partials/create_task_form.html", {"dayid": id, "task_form": form})
 
 @require_POST
 def task_toggle(request, id):

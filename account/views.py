@@ -9,11 +9,11 @@ from django.urls import reverse
 from django.contrib import messages
 
 class SignUpForm(forms.Form):
-  first_name = forms.CharField(label="First Name", max_length=50, min_length=2)
-  last_name = forms.CharField(label="Last Name", max_length=50, min_length=2)
-  username = forms.CharField(label="Username",max_length=50, min_length=3)
-  password = forms.CharField(label="Password", widget=forms.PasswordInput(), min_length=8)
-  confirm_password = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(), min_length=8)
+  first_name = forms.CharField(label="First Name", max_length=50, min_length=2, widget=forms.TextInput(attrs={"placeholder": "John"}))
+  last_name = forms.CharField(label="Last Name", max_length=50, min_length=2, widget=forms.TextInput(attrs={"placeholder": "Doe"}))
+  username = forms.CharField(label="Username",max_length=50, min_length=3, widget=forms.TextInput(attrs={"placeholder": "johndoe"}))
+  password = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={"placeholder": "Enter your password"}), min_length=8)
+  confirm_password = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(attrs={"placeholder": "Confirm your password"}), min_length=8)
 
   def clean_username(self):
     username = self.cleaned_data["username"]
@@ -63,8 +63,8 @@ def signup(request):
   })
 
 class LoginForm(forms.Form):
-  username = forms.CharField(label="Username", required=True)
-  password = forms.CharField(label="Password",widget=forms.PasswordInput() , required=True)
+  username = forms.CharField(label="Username", required=True, widget=forms.TextInput(attrs={"placeholder": "Enter your username"}))
+  password = forms.CharField(label="Password",widget=forms.PasswordInput(attrs={"placeholder": "Enter your password"}) , required=True)
   
   def clean(self):
     cleaned_data = super().clean()
