@@ -1,7 +1,8 @@
 <li class="flex justify-between gap-2 items-center cursor-pointer group"
+    id="day-{{day.id}}"
     hx-get="{% url "core:day-get" day.id %}"
-    hx-swap="outerHTML"
-    hx-target="#day-content"
+    hx-swap="innerHTML"
+    hx-target="#page-content"
     hx-push-url="true"
     x-data="{dayid: '{{ day.id }}'}"
     @click="$refs.leftSidebar.checked = false">

@@ -27,51 +27,16 @@
                         </svg>
                     </label>
                 </div>
-                {% block basecontent %}
-                {% endblock basecontent %}
-            </div>
-            {# TimerSideBar #}
-            <div class="drawer-end lg:drawer-open">
-                <input id="my-drawer-5" type="checkbox" class="drawer-toggle w-70" />
-                <div class="drawer-side border-l border-base-200 z-40">
-                    <c-pomoTimer />
+                <div id="page-content">
+                    {% block basecontent %}
+                    {% endblock basecontent %}
                 </div>
             </div>
+            {# TimerSideBar #}
+            <c-pomoTimer />
         </div>
         {# MainSideBar #}
-        <div class="drawer-side">
-            <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-            <ul class="bg-base-200 h-screen w-70 p-6 border-r border-base-300 flex flex-col gap-8">
-                {# Brand #}
-                <li>
-                    <c-brand />
-                </li>
-                {# Profile Settings #}
-                <li hx-get="{% url 'account:profile-header-get' %}"
-                    hx-trigger="refreshProfile from:body"
-                    hx-swap="innerHTML"
-                    class="rounded bg-base-100 border border-base-300 cursor-pointer flex p-3 items-center justify-between"
-                    onclick="settingsmodal.showModal()">
-                    {% include "partials/profile_header.html" %}
-                </li>                
-                {# Days List #}
-                <ul class="flex-1 flex flex-col gap-7 min-h-0 overflow-hidden"
-                    hx-get="{% url "core:day-list" %}"
-                    hx-target="#day-list"
-                    hx-swap="outerHTML"
-                    hx-trigger="load, refreshDayList from:body"
-                    hx-indicator="#day-list-skeleton">
-                    <h2 class="font-semibold text-base-content/50 text-xs">PAST DAYS</h2>
-                    <ul id="day-list" class="flex-1 flex flex-col gap-4 overflow-hidden">
-                        {% include "partials/day_list_skeleton.html" %}
-                    </ul>
-                </ul>
-                {# Creating Day Button #}
-                <li class="mt-auto pt-2">
-                    <button class="btn btn-primary w-full" onclick="creatingdaymodal.showModal()">Create Day</button>
-                </li>
-            </ul>
-        </div>
+        <c-sidebar />
         {# creating day dialog #}
         <c-modalForm id="creatingdaymodal">
             <c-slot name="title">

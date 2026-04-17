@@ -62,7 +62,7 @@ def index(request):
 
 def day_list(request):
   days = Day.objects.filter(owner=request.user).order_by("-date")
-  return render(request, "partials/day_list.html", {"days": days})
+  return render(request, "cotton/day_list.html", {"days": days})
 
 @require_POST
 @login_required
@@ -168,7 +168,7 @@ def task_create(request, id):
                           "refreshTaskList": None, 
                       }),
                   }
-               ) 
+               )
   
 
 @require_POST

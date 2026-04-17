@@ -1,6 +1,6 @@
 <dialog {{ attrs }} class="modal" hx-on:close-dialog="this.close()">
-    <div class="modal-box w-fit">
-        <div class="flex justify-between items-center">
+    <div class="modal-box w-fit p-0 m-0">
+        <div class="flex justify-between items-center bg-base-200 p-5">
             <h1 class="font-bold">{{ title }}</h1>
             <form method="dialog">
                 <button class="btn btn-ghost btn-circle btn-sm">
@@ -15,7 +15,10 @@
                 </button>
             </form>
         </div>
-        {{ slot }}
+        <div class="divider h-px before:h-px after:h-px m-0 p-0"></div>
+        <div class="p-5">
+            {{ slot }}
+        </div>
     </div>
     <form method="dialog" class="modal-backdrop">
         <button>close</button>
