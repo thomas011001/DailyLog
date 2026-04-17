@@ -58,18 +58,5 @@
             {% endfor %}
             </script>
         {% endif %}
-        <script>
-            document.body.addEventListener('htmx:afterSwap', function(evt) {
-                if (window.Alpine) {
-                    window.Alpine.discoverUninitializedComponents((el) => {
-                        window.Alpine.initializeComponent(el);
-                    });
-                }
-            });
-            document.addEventListener('htmx:afterSettle', (e) => {
-                Alpine.destroyTree(e.detail.elt);
-                Alpine.initTree(e.detail.elt);
-            });
-        </script>
     </body>
 </html>

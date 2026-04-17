@@ -11,7 +11,7 @@
             </div>
             <div class="border-base-300 shadow shadow-base-300 rounded-box max-w-sm w-full border p-6">
                 <div id="login-container">
-                    {% include "partials/login_form.html" %}
+                    <c-login-form :form="form" />
                     <div class="flex justify-center items-center gap-1 mt-3">
                         <p class="text-sm">Don't have an account?</p>
                         <a href="{% url "account:signup" %}" class="btn btn-link p-0">Sign up</a>

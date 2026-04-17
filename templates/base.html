@@ -7,9 +7,8 @@
                type="checkbox"
                class="drawer-toggle" />
         <div class="drawer-content relative h-dvh flex justify-between">
-            {# Page Content #}
             <div class="flex-1 overflow-y-auto">
-                {# LeftSideBarButton #}
+                {# SideBar Buttons #}
                 <div class="absolute bottom-5 right-5 flex flex-col gap-5">
                     <label for="my-drawer-5" class="btn btn-primary drawer-button lg:hidden">
                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -28,8 +27,8 @@
                         </svg>
                     </label>
                 </div>
-                {% block daycontent %}
-                {% endblock daycontent %}
+                {% block basecontent %}
+                {% endblock basecontent %}
             </div>
             {# TimerSideBar #}
             <div class="drawer-end lg:drawer-open">
@@ -48,13 +47,19 @@
                     <c-brand />
                 </li>
                 {# Profile Settings #}
-                {% include "partials/profile_header.html" %}
+                <li hx-get="{% url 'account:profile-header-get' %}"
+                    hx-trigger="refreshProfile from:body"
+                    hx-swap="innerHTML"
+                    class="rounded bg-base-100 border border-base-300 cursor-pointer flex p-3 items-center justify-between"
+                    onclick="settingsmodal.showModal()">
+                    {% include "partials/profile_header.html" %}
+                </li>                
                 {# Days List #}
                 <ul class="flex-1 flex flex-col gap-7 min-h-0 overflow-hidden"
                     hx-get="{% url "core:day-list" %}"
                     hx-target="#day-list"
-                    hx-swap="innerHTML"
-                    hx-trigger="load, dayCreated from:body"
+                    hx-swap="outerHTML"
+                    hx-trigger="load, refreshDayList from:body"
                     hx-indicator="#day-list-skeleton">
                     <h2 class="font-semibold text-base-content/50 text-xs">PAST DAYS</h2>
                     <ul id="day-list" class="flex-1 flex flex-col gap-4 overflow-hidden">
@@ -68,74 +73,18 @@
             </ul>
         </div>
         {# creating day dialog #}
-        <dialog id="creatingdaymodal" class="modal" hx-on:close-dialog="this.close()">
-            <div class="modal-box w-fit">
-                <div class="flex justify-between items-center">
-                    <h1 class="font-bold">Create New Day</h1>
-                    <form method="dialog">
-                        <button>
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke-width="1.5"
-                                 stroke="currentColor"
-                                 class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-                {% include "partials/creating_day_form.html" %}
-            </div>
-            <form method="dialog" class="modal-backdrop">
-                <button>close</button>
-            </form>
-        </dialog>
+        <c-modalForm id="creatingdaymodal">
+            <c-slot name="title">
+                Create New Day
+            </c-slot>
+            {% include "partials/creating_day_form.html" %}
+        </c-modalForm>
         {# settings dialog #}
-        <dialog id="settingsmodal" class="modal">
-            <div class="modal-box w-11/12 max-w-md flex flex-col max-h-[80vh]">
-                <div class="flex justify-between items-center pb-4 border-b border-base-200">
-                    <h1 class="font-bold text-xl">Settings</h1>
-                    <form method="dialog">
-                        <button class="btn btn-ghost btn-circle btn-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke-width="1.5"
-                                 stroke="currentColor"
-                                 class="size-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-                <div class="flex-1 pt-6 overflow-y-auto">
-                    <div class="flex flex-col gap-8">
-                        <div class="flex-1"
-                             hx-get="{% url 'account:update-profile' %}"
-                             hx-trigger="load"
-                             hx-swap="innerHTML">
-                            <span class="loading loading-spinner text-primary"></span> Loading profile...
-                        </div>
-                        <div class="divider"></div>
-                        <div class="flex-1"
-                             hx-get="{% url 'account:change-password' %}"
-                             hx-trigger="load"
-                             hx-swap="innerHTML">
-                            <span class="loading loading-spinner text-primary"></span> Loading password form...
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-auto pt-6 border-t border-base-200 flex justify-between items-center bg-base-100 z-10 sticky bottom-0">
-                    <a href="{% url 'account:logout' %}" class="btn btn-error btn-outline">Logout</a>
-                    <form method="dialog">
-                        <button class="btn">Close</button>
-                    </form>
-                </div>
-            </div>
-            <form method="dialog" class="modal-backdrop">
-                <button>close</button>
-            </form>
-        </dialog>
+         <c-modalForm id="settingsmodal">
+            <c-slot name="title">
+                Settings
+            </c-slot>
+            settings form
+        </c-modalForm>
     </div>
 {% endblock body %}

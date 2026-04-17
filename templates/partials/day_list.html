@@ -1,6 +1,7 @@
 {% now "Y-m-d" as today %}
 <ul class="gap-7 flex flex-col flex-1 overflow-y-auto pr-2"
     x-data="{activeUrl: window.location.pathname}"
+    id="day-list"
     @htmx:pushed-into-history.window="activeUrl = window.location.pathname">
     {% for day in days %}<c-dayItem :day="day" />{% endfor %}
 </ul>

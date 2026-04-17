@@ -2,9 +2,10 @@
     {# Header Section #}
     <div class="flex flex-col w-full gap-5"
          hx-get="{% url "core:day-header" dayid %}"
-         hx-trigger="load, dayUpdated from:body"
+         hx-trigger="load, refreshDayHeader from:body"
          hx-swap="innerHTML"
          hx-target="this">
+        {# skeleton #}
         <div class="skeleton max-w-100 w-full h-12"></div>
         <div class="flex justify-between items-center">
             <div class="skeleton max-w-50 w-full h-6"></div>
@@ -12,7 +13,8 @@
         </div>
     </div>
     {# Task Section #}
-    <div class="border border-base-300 rounded-xl shadow shadow-base-300 p-6 flex flex-col gap-5">
+    <div class="border border-base-300 rounded-xl shadow shadow-base-300 p-6 flex flex-col gap-5"
+         x-data="{showInput: false}">
         <div class="flex flex-col gap-2">
             <div class="flex justify-between">
                 <h1 class="text-xl font-bold text-start">Day Tasks</h1>
@@ -23,9 +25,10 @@
         <div id="task-list"
              class="flex flex-col gap-5"
              hx-get="{% url "core:task-list" dayid %}"
-             hx-trigger="load, taskCreated from:body"
+             hx-trigger="load, refreshTaskList from:body"
              hx-swap="innerHTML"
              hx-target="this">
+            {# skeleton #}
             <div class="flex gap-3">
                 <div class="skeleton h-8 w-8"></div>
                 <div class="skeleton h-8 max-w-100 w-full"></div>
@@ -39,8 +42,24 @@
                 <div class="skeleton h-8 max-w-50 w-full"></div>
             </div>
         </div>
-        <button onclick="createtaskdialog.showModal()"
-                class="btn btn-dash border-base-content/50 text-base-content/50 hover:text-primary hvoer:border-primary">
+        <form  x-show="showInput"
+               hx-post="{% url 'core:task-create' dayid %}"
+               hx-trigger="submit"
+               hx-swap="beforeend"
+               hx-target="#task-list"
+               hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+               @htmx:after-request="$el.reset(); showInput = false"
+               >
+            <label class="input validator w-full">
+                <input type="text" class="grow" placeholder="Task Title" name="title" required minlength="2">
+                <button type="button" @click="showInput = false; $el.closest('form').reset()" class="btn btn-ghost btn-sm btn-circle" >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </label>
+        </form>
+        <button x-show="!showInput" @click="showInput = true" class="btn btn-dash border-base-content/50 text-base-content/50 hover:text-primary hvoer:border-primary">
             + ADD TASK
         </button>
     </div>
@@ -49,41 +68,14 @@
         <h1 class="font-bold text-2xl">Day Flow</h1>
         <ul class="steps steps-vertical"
             hx-get="{% url "core:step-list" dayid %}"
-            hx-trigger="load, stepCreated from:body"
+            hx-trigger="load, refreshStepList from:body"
             hx-swap="innerHTML"
             hx-target="this">
             <li class="step"><div class="skeleton w-60 h-10"></div></li>
             <li class="step"><div class="skeleton w-80 h-10"></div></li>
             <li class="step"><div class="skeleton w-40 h-10"></div></li>
         </ul>
-        <button onclick="createStepDialog.showModal()"
-                class="btn btn-dash border-base-content/50 text-base-content/50 hover:text-primary hvoer:border-primary">
-            + ADD STEP
-        </button>
     </div>
-    <dialog id="createtaskdialog" class="modal" hx-on:close-dialog="this.close()">
-        <div class="modal-box w-fit">
-            <div class="flex justify-between items-center">
-                <h1 class="font-bold">Create New Task</h1>
-                <form method="dialog">
-                    <button>
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke-width="1.5"
-                             stroke="currentColor"
-                             class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </form>
-            </div>
-            {% include "partials/create_task_form.html" %}
-        </div>
-        <form method="dialog" class="modal-backdrop">
-            <button>close</button>
-        </form>
-    </dialog>
     <dialog id="editdaydialog" class="modal" hx-on:close-dialog="this.close()">
         <div class="modal-box w-fit">
             <div class="flex justify-between items-center">
@@ -107,36 +99,6 @@
                  hx-swap="innerHTML">
                 <span class="loading loading-spinner text-primary"></span> Loading...
             </div>
-        </div>
-        <form method="dialog" class="modal-backdrop">
-            <button>close</button>
-        </form>
-    </dialog>
-    <dialog id="createStepDialog" class="modal" hx-on:close-dialog="this.close()">
-        <div class="modal-box w-fit"
-             x-cloak
-             x-data="{stepType{{dayid}}: 'break'}">
-            <div class="flex justify-between items-center">
-                <h1 class="font-bold">Create New Step</h1>
-                <form method="dialog">
-                    <button>
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke-width="1.5"
-                             stroke="currentColor"
-                             class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </form>
-            </div>
-            <div class="tabs tabs-box">
-                <input x-model="stepType{{dayid}}" value="break" name="stepType{{dayid}}" type="radio" aria-label="Break" class="tab flex-1">
-                <input x-model="stepType{{dayid}}" value="work" name="stepType{{dayid}}" type="radio" aria-label="Work" class="tab flex-1">
-            </div>
-            {% include "partials/create_break_step_form.html" %}
-            {% include "partials/create_work_step_form.html" %}
         </div>
         <form method="dialog" class="modal-backdrop">
             <button>close</button>

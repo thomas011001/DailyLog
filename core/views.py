@@ -80,7 +80,7 @@ def day_create(request):
                   headers={
                       "HX-Trigger": json.dumps({
                           "closeDialog": None,
-                          "dayCreated": None, 
+                          "refreshDayList": None, 
                       }),
                       "HX-Location": json.dumps({
                           "path": reverse("core:day-get", kwargs={'id': new_day.pk}),
@@ -105,7 +105,7 @@ def day_update(request, id):
                 headers={
                     "HX-Trigger": json.dumps({
                         "closeDialog": None,
-                        "dayCreated": None, 
+                        "refreshDayList": None, 
                     }),
                     "HX-Location": json.dumps({
                         "path": reverse("core:day-get", kwargs={'id': day.pk}),
@@ -127,7 +127,11 @@ def day_delete(request, id):
     return HttpResponse(
         status=204,
         headers={
-            "HX-Redirect": reverse("core:index")
+            "HX-Location": json.dumps({
+                          "path": reverse("core:index"),
+                          "target": "#day-content",
+                          "swap": "outerHTML",
+                      })
         }
     )
     
@@ -161,12 +165,11 @@ def task_create(request, id):
                   headers={
                       "HX-Trigger": json.dumps({
                           "closeDialog": None,
-                          "taskCreated": None, 
+                          "refreshTaskList": None, 
                       }),
                   }
                ) 
   
-  return render(request, "partials/create_task_form.html", {"dayid": id, "task_form": form})
 
 @require_POST
 def task_toggle(request, id):

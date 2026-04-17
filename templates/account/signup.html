@@ -9,7 +9,7 @@
             </div>
             <div class="border-base-300 shadow shadow-base-300 rounded-box max-w-sm border p-6">
                 <div id="signup-container">
-                    {% include "partials/signup_form.html" %}
+                    <c-signup-form />
                     <div class="flex justify-center items-center gap-1 mt-3">
                         <p class="text-sm">Alread Have an Account?</p>
                         <a href="{% url "account:login" %}" class="btn btn-link p-0">Login</a>

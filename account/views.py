@@ -50,12 +50,10 @@ def signup(request):
                 last_name=data["last_name"],
                 password=data["password"]
             )
-            if request.htmx:
-              return HttpResponse(status=204, headers={'HX-Redirect': reverse('account:login')})
-            return redirect("account:login")
+
+            return HttpResponse(status=204, headers={'HX-Redirect': reverse('account:login')})
           
-        if request.headers.get('HX-Request'):
-            return render(request, 'partials/signup_form.html', {"form": form})
+        return render(request, 'cotton/signup_form.html', {"form": form})
 
   form = SignUpForm()     
   return render(request, 'account/signup.html', {
@@ -93,7 +91,7 @@ def login(request):
       messages.success(request, "You have successfuly logged in.")
       return HttpResponse(status=204, headers={'HX-Redirect': reverse('core:index')})
 
-    return render(request, "partials/login_form.html", {
+    return render(request, "cotton/login_form.html", {
       "form": form
     })
 
