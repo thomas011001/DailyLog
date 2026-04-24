@@ -1,55 +1,14 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div x-data id="sidebar" class="drawer lg:drawer-open">
-        {# input to controller the show state of the left sidebar #}
-        <input x-ref="leftSidebar"
-               id="my-drawer-3"
-               type="checkbox"
-               class="drawer-toggle" />
-        <div class="drawer-content relative h-dvh flex justify-between">
-            <div class="flex-1 overflow-y-auto">
-                {# SideBar Buttons #}
-                <div class="absolute bottom-5 right-5 flex flex-col gap-5">
-                    <label for="my-drawer-5" class="btn btn-primary drawer-button lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="currentColor"
-                             class="size-6">
-                            <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
-                        </svg>
-                    </label>
-                    <label for="my-drawer-3" class="btn btn-primary drawer-button lg:hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             viewBox="0 0 24 24"
-                             fill="currentColor"
-                             class="size-6">
-                            <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
-                        </svg>
-                    </label>
-                </div>
-                <div id="page-content">
+    <div x-data class="bg-primary-foreground flex">
+            <c-sidebar />
+            <div class="m-2 w-full rounded flex border border-border bg-accent">
+                <div id="page-content" class="flex-1">
                     {% block basecontent %}
                     {% endblock basecontent %}
                 </div>
+                {# TimerSideBar #}
+                <c-pomoTimer />
             </div>
-            {# TimerSideBar #}
-            <c-pomoTimer />
-        </div>
-        {# MainSideBar #}
-        <c-sidebar />
-        {# creating day dialog #}
-        <c-modalForm id="creatingdaymodal">
-            <c-slot name="title">
-                Create New Day
-            </c-slot>
-            {% include "partials/creating_day_form.html" %}
-        </c-modalForm>
-        {# settings dialog #}
-         <c-modalForm id="settingsmodal">
-            <c-slot name="title">
-                Settings
-            </c-slot>
-            settings form
-        </c-modalForm>
     </div>
 {% endblock body %}

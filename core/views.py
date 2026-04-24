@@ -137,7 +137,7 @@ def day_delete(request, id):
     
 def day_get(request, id):
   if request.htmx:
-    response = render(request, 'partials/day_get.html', {'dayid':id, "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
+    response = render(request, 'cotton/day_get.html', {'dayid':id, "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
     response["HX-Trigger"] = "dayGet"
     return response
 
@@ -149,7 +149,7 @@ def day_header(request, id):
 
 def task_list(request, id):
   tasks = Task.objects.filter(day_id=id)
-  return render(request, "partials/task_list.html", {"tasks": tasks})
+  return render(request, "cotton/task_list.html", {"tasks": tasks})
 
 def task_create(request, id):
   day = get_object_or_404(Day, pk=id)
@@ -236,16 +236,14 @@ def work_step_create(request, id):
 
 def step_list(request, id):
   steps = Step.objects.prefetch_related("sessions").filter(day_id=id)
-  return render(request, "partials/step_list.html", {"steps": steps})
+  return render(request, "cotton/step_list.html", {"steps": steps})
     
 
 @require_POST
 @login_required
 def step_delete(request, id):
     step = get_object_or_404(Step, pk=id, day__owner=request.user)
-    day_id = step.day_id
     step.delete()
-    # After deleting, we might want to refresh the list or just return nothing if handled by htmx delete
     return HttpResponse("")
 
 @require_POST

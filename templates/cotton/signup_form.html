@@ -29,7 +29,7 @@
         {% for field in form %}
             {% if field.name == "password" or field.name == "confirm_password" %}<c-passField :field="field" />{% endif %}
         {% endfor %}
-        <button class="btn btn-primary w-full mt-4" :disabled="loading">
+        <button class="bg-primary text-primary-foreground rounded p-2 w-full mt-4" :disabled="loading">
             <span x-show="!loading">Create An Account</span>
             <span x-show="loading">Creating...</span>
         </button>

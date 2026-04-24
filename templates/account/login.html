@@ -4,17 +4,17 @@
         <div class="flex flex-col items-center gap-5 w-full">
             <div class="w-full max-w-sm flex flex-col gap-3">
                 <c-brand />
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2 text-primary">
                     <h1 class="font-bold text-base-content text-3xl">Welcome Back</h1>
                     <p class="text-base-content/50">Enter your credentials to enter your Dailylog.</p>
                 </div>
             </div>
-            <div class="border-base-300 shadow shadow-base-300 rounded-box max-w-sm w-full border p-6">
+            <div class="border border-border text-primary rounded max-w-sm w-full p-6">
                 <div id="login-container">
                     <c-login-form :form="form" />
                     <div class="flex justify-center items-center gap-1 mt-3">
-                        <p class="text-sm">Don't have an account?</p>
-                        <a href="{% url "account:signup" %}" class="btn btn-link p-0">Sign up</a>
+                        <p class="text-sm text-muted-foreground">Don't have an account?</p>
+                        <a href="{% url "account:signup" %}" class="hover:underline hover:bg-yellow text-primary">Sign up</a>
                     </div>
                 </div>
             </div>

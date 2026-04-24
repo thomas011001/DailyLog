@@ -16,7 +16,7 @@
         {% for field in form %}
             {% if field.name == "password" %}<c-passField :field="field" />{% else %}<c-fieldset :field="field" />{% endif %}
         {% endfor %}
-        <button class="btn btn-primary w-full mt-4" :disabled="loading">
+        <button class="bg-primary text-primary-foreground rounded p-2 w-full mt-4" :disabled="loading">
             <span x-show="!loading">Login</span>
             <span x-show="loading">Logging in...</span>
         </button>

@@ -4,15 +4,15 @@
         <div class="flex flex-col items-center gap-5">
             <c-brand />
             <div class="flex flex-col gap-2 items-center">
-                <h1 class="font-bold text-base-content text-3xl">Create An Account</h1>
-                <p class="text-base-content/50 text-center">Enter your details below to create your account and start logging.</p>
+                <h1 class="font-bold text-primary text-3xl">Create An Account</h1>
+                <p class="text-muted-foreground text-center">Enter your details below to create your account and start logging.</p>
             </div>
-            <div class="border-base-300 shadow shadow-base-300 rounded-box max-w-sm border p-6">
+            <div class="border-border rounded max-w-sm border p-6">
                 <div id="signup-container">
                     <c-signup-form />
                     <div class="flex justify-center items-center gap-1 mt-3">
-                        <p class="text-sm">Alread Have an Account?</p>
-                        <a href="{% url "account:login" %}" class="btn btn-link p-0">Login</a>
+                        <p class="text-sm text-muted-foreground">Alread Have an Account?</p>
+                        <a href="{% url "account:login" %}" class="text-primary hover:underline p-0">Login</a>
                     </div>
                 </div>
             </div>

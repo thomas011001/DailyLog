@@ -46,8 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "core",
     "account",
-    "tailwind",
-    "theme",
     'widget_tweaks',
     "django_htmx",
     "django_cotton",
@@ -134,7 +132,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
-TAILWIND_APP_NAME = "theme"
 
 LOGIN_URL = 'account:login'

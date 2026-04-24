@@ -1,33 +1,27 @@
 <div class="drawer-side">
-  <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
-  <ul class="bg-base-200 h-screen w-70 p-6 border-r border-base-300 flex flex-col gap-8">
+  <ul class="bg-sidebar h-screen w-70 p-6 flex flex-col gap-5 text-primary">
       {# Brand #}
       <li>
           <c-brand />
       </li>
-      {# Profile Settings #}
-      <li hx-get="{% url 'account:profile-header-get' %}"
-          hx-trigger="refreshProfile from:body"
-          hx-swap="innerHTML"
-          class="rounded bg-base-100 border border-base-300 cursor-pointer flex p-3 items-center justify-between"
-          onclick="settingsmodal.showModal()">
-          <c-profile-header />
-      </li>                
-      {# Days List #}
-      <ul class="flex-1 flex flex-col gap-7 min-h-0 overflow-hidden"
-          hx-get="{% url "core:day-list" %}"
-          hx-target="#day-list"
-          hx-swap="outerHTML"
-          hx-trigger="load, refreshDayList from:body"
-          hx-indicator="#day-list-skeleton">
-          <h2 class="font-semibold text-base-content/50 text-xs">PAST DAYS</h2>
-          <ul id="day-list" class="flex-1 flex flex-col gap-4 overflow-hidden">
-              <c-day-list-skeleton></c-day-list-skeleton>
-          </ul>
-      </ul>
-      {# Creating Day Button #}
-      <li class="mt-auto pt-2">
-          <button class="btn btn-primary w-full" onclick="creatingdaymodal.showModal()">Create Day</button>
+      <div class="w-full h-px bg-border"></div>
+      <li>
+          <button class="bg-primary text-primary-foreground rounded p-2 w-full" onclick="creatingdaymodal.showModal()">New Day</button>
       </li>
+      <div class="w-full h-px bg-border"></div>
+      <ul x-data="{active:}" class="flex flex-col gap-2">
+        <li class="flex gap-2 items-center hover:bg-secondary rounded text-lg font-bold p-3 transition text-muted-foreground hover:text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-dashed-icon lucide-circle-dashed"><path d="M10.1 2.182a10 10 0 0 1 3.8 0"/><path d="M13.9 21.818a10 10 0 0 1-3.8 0"/><path d="M17.609 3.721a10 10 0 0 1 2.69 2.7"/><path d="M2.182 13.9a10 10 0 0 1 0-3.8"/><path d="M20.279 17.609a10 10 0 0 1-2.7 2.69"/><path d="M21.818 10.1a10 10 0 0 1 0 3.8"/><path d="M3.721 6.391a10 10 0 0 1 2.7-2.69"/><path d="M6.391 20.279a10 10 0 0 1-2.69-2.7"/></svg>
+            Home
+        </li>   
+        <li class="flex gap-2 items-center hover:bg-secondary rounded text-lg font-bold p-3 transition text-muted-foreground hover:text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gallery-vertical-end-icon lucide-gallery-vertical-end"><path d="M7 2h10"/><path d="M5 6h14"/><rect width="18" height="12" x="3" y="10" rx="2"/></svg>
+            History
+        </li>   
+        <li class="flex gap-2 items-center hover:bg-secondary rounded text-lg font-bold p-3 transition text-muted-foreground hover:text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings-icon lucide-settings"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></svg>
+            Settings
+        </li>   
+      </ul>
   </ul>
 </div>
