@@ -4,13 +4,14 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script defer
+                src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
         <script src="//unpkg.com/alpinejs" defer></script>
+        <script src={% static "js/nprogress.js" %} defer></script>
         <link rel="stylesheet" href={% static "css/tailwind.dist.css" %}>
-        <style src={% static "css/tailwind.dist.css" %}></style>
+        <link rel="stylesheet" href={% static "css/nprogress.css" %}>
         <title>DailyLog</title>
-        <style>
-            [x-cloak] { display: none !important; }
-        </style>
+        <style>[x-cloak] { display: none !important; }</style>
     </head>
     <body class="bg-background">
         {% block body %}
@@ -26,8 +27,9 @@
                     
                     Swal.fire({
                         title: 'Are you sure?',
+                        theme: 'dark',
                         text: evt.target.getAttribute('hx-confirm'),
-                        icon: 'warning',
+                        icon: 'question',
                         target: targetDialog || 'body',
                         showCancelButton: true,
                         confirmButtonColor: '#ef4444', 

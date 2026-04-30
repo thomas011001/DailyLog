@@ -1,4 +1,285 @@
 {% extends "base.html" %}
 {% block basecontent %}
-<c-day-get />
+    {% partialdef page inline %}
+    <div class="p-5 text-foreground flex flex-col gap-8">
+        {% partialdef header inline %}
+        {# Header Section #}
+        <div id="day-header">
+            {# Title #}
+            <h1 class="break-all text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tighter {% if not day.title %}italic{% endif %}">
+                {{ day.title|default:"Untitled"|upper }}
+            </h1>
+            {# Date and Edit Button Container #}
+            <div class="flex justify-between items-center">
+                {# Date #}
+                <p class="text-foreground/60">{{ day.date|date:"l, F jS" }}</p>
+                {# Edit Button #}
+                <button class="btn btn-ghost btn-xs btn-circle"
+                        onclick="editdaydialog.showModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 16 16"
+                         fill="currentColor"
+                         class="size-4">
+                        <path d="M13.488 2.513a1.75 1.75 0 0 0-2.475 0L6.75 6.774a2.75 2.75 0 0 0-.596.892l-.848 2.047a.75.75 0 0 0 .98.98l2.047-.848a2.75 2.75 0 0 0 .892-.596l4.261-4.262a1.75 1.75 0 0 0 0-2.474Z" />
+                        <path d="M4.75 3.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h6.5c.69 0 1.25-.56 1.25-1.25V9A.75.75 0 0 1 14 9v2.25A2.75 2.75 0 0 1 11.25 14h-6.5A2.75 2.75 0 0 1 2 11.25v-6.5A2.75 2.75 0 0 1 4.75 2H7a.75.75 0 0 1 0 1.5H4.75Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    {% endpartialdef %}
+    {% partialdef tasks inline %}
+    <div class="border border-border rounded-md p-6 flex flex-col gap-5 bg-secondary/50"
+         x-data="{ showInput: false }">
+        <div class="flex flex-col gap-2">
+            <div class="flex justify-between">
+                <h1 class="text-2xl text-start">Day Tasks</h1>
+            </div>
+            <div class="h-px bg-border"></div>
+        </div>
+        <div id="task-list"
+             class="flex flex-col gap-5"
+             x-data="{ hasTasks: {{ tasks|yesno:'true,false' }} }"
+             @htmx:after-request.window="hasTasks = $el.querySelectorAll('.task').length > 0">
+            <div class="flex flex-col items-center justify-center p-8 text-center bg-secondary rounded-xl border border-border gap-3"
+                 x-show="!hasTasks">
+                <div class="p-3 bg-base-200 rounded-full text-foreground/30">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor"
+                         class="size-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .415.162.798.425 1.081.263.283.629.459 1.034.459.405 0 .771-.176 1.034-.459.263-.283.425-.666.425-1.081 0-.231-.035-.454-.1-.664m-5.801 0A2.251 2.251 0 0 1 13.5 2.25c.757 0 1.417.375 1.801.944m-5.801 0c-1.213.082-2.151 1.2-2.151 2.421v13.23a2.25 2.25 0 0 0 2.25 2.25h3m-3-18.75a2.25 2.25 0 0 1 3-2.25h3.75a2.25 2.25 0 0 1 3 2.25" />
+                    </svg>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-secondary-foreground font-bold text-lg">No Tasks</span>
+                    <span class="text-secondary-foreground/50 text-sm">Your task list is empty. Add a task to stay organized.</span>
+                </div>
+            </div>
+            {% for task in tasks %}
+                {% partialdef task inline %}
+                <div id="task-{{ task.id }}"
+                     class="task flex items-center justify-between group"
+                     x-data="{checked: {{ task.is_complete|yesno:'true,false' }}}">
+                    <div class="flex items-center gap-5">
+                        <input type="checkbox"
+                               class="appearance-none h-5 w-5 border border-border rounded-full bg-secondary checked:bg-primary checked:ring-1 transition-all duration-200"
+                               :checked="checked"
+                               @change="checked = !checked"
+                               hx-post="{% url 'core:task-toggle' task.id %}"
+                               hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                        <h4 class="font text-foreground text-lg transition-all delay-200    "
+                            :class="{'line-through opacity-50': checked}">{{ task.title|capfirst }}</h4>
+                    </div>
+                    <button class="btn btn-ghost btn-xs text-error opacity-0 group-hover:opacity-100 transition"
+                            hx-post="{% url 'core:task-delete' task.id %}"
+                            hx-confirm="Delete this task?"
+                            hx-target="#task-{{ task.id }}"
+                            hx-swap="delete"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 16 16"
+                             fill="currentColor"
+                             class="size-4">
+                            <path fill-rule="evenodd" d="M5 3.25V4H2.75a.75.75 0 0 0 0 1.5h.3l.815 8.15A1.5 1.5 0 0 0 5.357 15h5.285a1.5 1.5 0 0 0 1.493-1.35l.815-8.15h.3a.75.75 0 0 0 0-1.5H11v-.75A2.25 2.25 0 0 0 8.75 1h-1.5A2.25 2.25 0 0 0 5 3.25Zm2.25-.75a.75.75 0 0 0-.75.75V4h3v-.75a.75.75 0 0 0-.75-.75h-1.5ZM6.05 6a.75.75 0 0 1 .787.713l.275 5.5a.75.75 0 0 1-1.498.075l-.275-5.5A.75.75 0 0 1 6.05 6Zm3.9 0a.75.75 0 0 1 .712.787l-.275 5.5a.75.75 0 0 1-1.498-.075l.275-5.5a.75.75 0 0 1 .786-.712Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            {% endpartialdef %}
+        {% endfor %}
+    </div>
+    <form x-show="showInput"
+          x-data="{ loading: false }"
+          hx-post="{% url 'core:task-create' day.id %}"
+          hx-trigger="submit"
+          hx-swap="beforeend"
+          hx-target="#task-list"
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          @htmx:before-request="loading = true"
+          @htmx:after-request="$el.reset(); showInput = false; loading = false"
+          x-cloak>
+        <div class="flex justify-between items-center border border-border rounded-md">
+            <input x-ref="taskInput"
+                   type="text"
+                   class="focus:outline-0 p-2 flex-1"
+                   placeholder="Task Title"
+                   name="title"
+                   required
+                   minlength="2">
+            <div class="flex gap-2 justify-center items-center">
+                <button type="button"
+                        @click="showInput = false; $el.closest('form').reset()"
+                        class="rounded-full hover:bg-secondary size-8 p-1 flex justify-center items-center  ">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor"
+                         class="size-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <button type="submit"
+                        class="bg-secondary/80 p-2 border-l border-border rounded-r-md hover:bg-secondary/60 active:bg-secondary/50"
+                        :class="{'bg-secondary!': loading}">
+                    <span x-show="!loading">Create</span>
+                    <span x-cloak x-show="loading">Creating</span>
+                </button>
+            </div>
+        </div>
+    </form>
+    <button x-show="!showInput"
+            @click="showInput = true;"
+            class="border border-dashed border-border p-2 rounded-md hover:bg-secondary active:bg-secondary/60">
+        + ADD TASK
+    </button>
+</div>
+{% endpartialdef %}
+{% partialdef steps inline %}
+<div 
+    class="border border-border rounded-md p-6 flex flex-col gap-5 bg-secondary/50"
+    x-data="{showInput: false, }"
+>
+    <div class="flex flex-col gap-2">
+        <div class="flex justify-between">
+            <h1 class="font-bold text-2xl">Day Flow</h1>
+        </div>
+        <div class="h-px bg-border"></div>
+    </div>
+    <div 
+         id="steps"
+         class="flex flex-col gap-5"
+         x-data="{ hasSteps: {{ steps|yesno:'true,false' }} }"
+         @htmx:after-request.window="hasSteps = $el.querySelectorAll('.step').length > 0">
+        <div class="flex flex-col items-center justify-center p-8 text-center bg-secondary rounded-xl border border-border gap-3"
+             x-show="!hasSteps">
+            <div class="p-3 rounded-full text-foreground/30">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 24 24"
+                     stroke-width="1.5"
+                     stroke="currentColor"
+                     class="size-8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-foreground font-bold text-lg">Empty Flow</span>
+                <span class="text-foreground/50 text-sm">Add your first step to start tracking your day.</span>
+            </div>
+        </div>
+        {% for step in steps %}
+            {% partialdef step inline %}
+            {% if step.type == "work"  %}
+                <div class="last:after:hidden step flex gap-5 items-center relative after:w-px after:h-5 after:transition after:delay-200 after:bg-border after:absolute after:-bottom-5 after:left-4"
+                     x-data="{step_complete: {{step.is_complete|yesno:"true,false"}}}"
+                     :class="{'after:bg-primary': step_complete}"
+                     > 
+                        <span class="transition-all delay-200 size-8 flex justify-center items-center text-muted-foreground p-2 bg-secondary rounded-full border border-border"
+                            :class="{'bg-primary! text-primary-foreground!': step_complete}"
+                            x-transition
+                            @click="step_complete = !step_complete"
+                            hx-post="{% url 'core:step-toggle' step.id %}"
+                            hx-trigger="click"
+                            hx-swap="none"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                            {{step.order}}
+                        </span>                    <div class="flex gap-2 flex-wrap">
+                        {% for session in step.sessions.all %}
+                            <input type="checkbox" 
+                                :checked="{{session.is_complete|yesno:'true,false'}}"
+                                class="appearance-none size-8 bg-secondary rounded border border-border 
+                                    checked:bg-primary/80 transition-all duration-200
+                                    relative flex items-center justify-center
+                                    after:content-[''] after:size-2 after:bg-border after:rounded-full 
+                                    checked:after:bg-primary after:shadow-2xl after:shadow-primary-foreground after:transition-all after:duration-200"
+                                hx-post="{% url 'core:session-toggle' session.id %}"
+                                hx-swap="none"
+                                hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                            />
+                        {% endfor %}
+                    </div>
+                </div>
+            {% elif step.type == "break" %}
+                <div class="last:after:hidden step flex gap-5 items-center relative after:w-px after:h-5  after:bg-border after:absolute after:-bottom-5 after:left-4 after:transition after:delay-200"
+                     x-data="{step_complete: {{step.is_complete|yesno:"true,false"}}}"
+                     :class="{'after:bg-primary': step_complete}"> 
+                    <span class="transition-all delay-200 size-8 flex justify-center items-center text-muted-foreground p-2 bg-secondary rounded-full border border-border"
+                          :class="{'bg-primary! text-primary-foreground!': step_complete}"
+                          x-transition
+                          @click="step_complete = !step_complete"
+                          hx-post="{% url 'core:step-toggle' step.id %}"
+                          hx-trigger="click"
+                          hx-swap="none"
+                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                        {{step.order}}
+                    </span>
+                    <span class="transition-all delay-200 duration-200" 
+                          :class="{'line-through text-muted-foreground': step_complete}">
+                        {{ step.description }}
+                    </span>
+                </div>
+            {% endif %}
+            {% endpartialdef %}
+        {% endfor %}
+    </div>
+    <div class="flex flex-col gap-2"
+         x-show="showInput"
+         x-data="{stepType: 'focus', loading: false}"
+         x-cloak>
+         <div class="flex gap-1 rounded-md border border-border p-1">
+            <span class="rouned p-1 flex-1 rounded-md text-center"  :class="{'hover:bg-secondary/50': stepType != 'focus', 'bg-secondary': stepType == 'focus'}" @click="stepType = 'focus'; $focus.focus($refs.stepInput); $refs.stepInput.value = ''">Focus</span>
+            <span class="rouned p-1 flex-1 rounded-md text-center" :class="{'hover:bg-secondary/50': stepType != 'break', 'bg-secondary': stepType == 'break'}" @click="stepType = 'break'; $focus.focus($refs.stepInput); $refs.stepInput.value = ''">Break</span>
+         </div>
+        <form class="flex justify-between items-center border border-border rounded-md" 
+              hx-post="{% url 'core:focus-step-create' day.id %}" 
+              :hx-post="stepType == 'focus' ? '{% url 'core:focus-step-create' day.id %}' : '{% url 'core:break-step-create' day.id %}'"
+              hx-target="#steps"
+              hx-swap="beforeend"
+              @htmx:config-request.camel="$event.detail.path = stepType == 'focus' ? '{% url 'core:focus-step-create' day.id %}' : '{% url 'core:break-step-create' day.id %}'"
+              @htmx:before-request="loading = true"
+              @htmx:after-request="$el.reset(); showInput = false; loading = false"
+              >
+            {% csrf_token %}
+            <input x-ref="stepInput"
+                   :type="stepType == 'focus' ? 'number' : 'text'"
+                   class="focus:outline-0 p-2 flex-1"
+                   :placeholder="stepType == 'focus' ? 'Session Counter' : 'Break Description'"
+                   :name="stepType == 'focus' ? 'sessions_counter' : 'description'"
+                   required
+                   min=1
+                   max=6
+                   minlength=2>
+            <div class="flex gap-2 justify-center items-center">
+                <button type="button"
+                        @click="showInput = false; $el.closest('form').reset()"
+                        class="rounded-full hover:bg-secondary size-8 p-1 flex justify-center items-center  ">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke-width="1.5"
+                         stroke="currentColor"
+                         class="size-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <button type="submit"
+                        class="bg-secondary/80 p-2 border-l border-border rounded-r-md hover:bg-secondary/60 active:bg-secondary/50"
+                        :class="{'bg-secondary!': loading}">
+                    <span x-show="!loading">Create</span>
+                    <span x-cloak x-show="loading">Creating</span>
+                </button>
+            </div>
+        <form>
+    </div>
+    <button x-show="!showInput"
+            @click="showInput = true;"
+            class="border border-dashed border-border p-2 rounded-md hover:bg-secondary active:bg-secondary/60">
+        + ADD STEP
+    </button>
+</div>
+{% endpartialdef %}
+</div>
+{% endpartialdef %}
 {% endblock basecontent %}

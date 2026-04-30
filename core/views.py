@@ -1,11 +1,13 @@
 import json
 
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404
 from django import forms
 from django.urls import reverse
+from django_htmx.http import trigger_client_event
 
 from core.models import Day, Task, Step, WorkSession
 
@@ -29,8 +31,8 @@ class EditingDayForm(forms.ModelForm):
 
 
 class CreatingDayForm(forms.Form):
-  title = forms.CharField(label="Title", max_length=50, min_length=1, required=False)
-  date = forms.DateField(label="Date", widget=forms.DateInput(attrs={"type": "date"}))
+  title = forms.CharField(label="Title", max_length=50, min_length=1, required=False, widget=forms.TextInput(attrs={"placeholder": "New Day Title"}))
+  date = forms.DateField(label="Date", widget=forms.DateInput(attrs={"type": "date", "x-ref": "dateInput"}))
 
   def __init__(self, *args, **kwargs):
     self.user = kwargs.pop('user', None)
@@ -55,42 +57,23 @@ class CreateWorkStep(forms.Form):
 
 @login_required
 def index(request):
-  context = {
-    "form": CreatingDayForm()
-  }
-  return render(request, "core/index.html", context)
+  if request.htmx:
+    return render(request, "core/index.html#page")
+  return render(request, "core/index.html",)
 
 def day_list(request):
   days = Day.objects.filter(owner=request.user).order_by("-date")
-  return render(request, "cotton/day_list.html", {"days": days})
+  paginator = Paginator(days, 5)
 
-@require_POST
-@login_required
-def day_create(request):
-    form = CreatingDayForm(request.POST, user=request.user)
-    
-    if form.is_valid():
-      data = form.cleaned_data
+  page_number = request.GET.get("page")  
+  page = paginator.get_page(page_number)
 
-      new_day = Day(owner=request.user, title=data["title"], date=data["date"])
-      new_day.save()
-  
-      return HttpResponse(
-                  status=204,
-                  headers={
-                      "HX-Trigger": json.dumps({
-                          "closeDialog": None,
-                          "refreshDayList": None, 
-                      }),
-                      "HX-Location": json.dumps({
-                          "path": reverse("core:day-get", kwargs={'id': new_day.pk}),
-                          "target": "#day-content",
-                          "swap": "outerHTML",
-                      })
-                  }
-              )
+  context = {"days": page.object_list, "has_next": page.has_next(), "has_previous": page.has_previous() , "page_number": page.number, "next": page.number + 1, "previous": page.number - 1}
 
-    return render(request, 'partials/creating_day_form.html', {"form": form})
+  if request.htmx:
+    return render(request, "core/history.html#page", context)
+  return render(request, "core/history.html", context)
+
 
 @login_required
 def day_update(request, id):
@@ -136,20 +119,14 @@ def day_delete(request, id):
     )
     
 def day_get(request, id):
+  day = get_object_or_404(Day.objects.prefetch_related('task_set', "steps__sessions"), pk=id)
+  print(day.steps.all)
+  context = {"day": day, "tasks": day.task_set.all(), "steps": day.steps.all()}
   if request.htmx:
-    response = render(request, 'cotton/day_get.html', {'dayid':id, "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
-    response["HX-Trigger"] = "dayGet"
-    return response
+    return render(request, 'core/day.html#page', context)
 
-  return render(request, "core/day.html", {"dayid":id, "form": CreatingDayForm(), "task_form": CreateTaskForm(), "break_step_form": CreateBreakStep(), "work_step_form": CreateWorkStep()})
+  return render(request, "core/day.html", context)
 
-def day_header(request, id):
-  day = get_object_or_404(Day, id=id, owner=request.user)
-  return render(request, "cotton/dayHeader.html", {"day": day})
-
-def task_list(request, id):
-  tasks = Task.objects.filter(day_id=id)
-  return render(request, "cotton/task_list.html", {"tasks": tasks})
 
 def task_create(request, id):
   day = get_object_or_404(Day, pk=id)
@@ -160,16 +137,9 @@ def task_create(request, id):
     new_task = Task(day=day, title=data["title"])
     new_task.save()
 
-    return HttpResponse(
-                  status=204,
-                  headers={
-                      "HX-Trigger": json.dumps({
-                          "closeDialog": None,
-                          "refreshTaskList": None, 
-                      }),
-                  }
-               )
+    return render(request, "core/day.html#task", {"task": new_task})
   
+  return HttpResponse("")
 
 @require_POST
 def task_toggle(request, id):
@@ -178,7 +148,7 @@ def task_toggle(request, id):
   print(task.is_complete)
   task.save()
   
-  return render(request, "partials/task_item.html", {"task": task})
+  return HttpResponse(status=204)
 
 @require_POST
 @login_required
@@ -198,15 +168,7 @@ def break_step_create(request, id):
     new_step = Step(day_id=id, type=Step.BREAK, description=data["description"])
     new_step.save()
   
-    return HttpResponse(
-                  status=204,
-                  headers={
-                      "HX-Trigger": json.dumps({
-                          "closeDialog": None,
-                          "stepCreated": None, 
-                      }),
-                  }
-               ) 
+    return render(request, "core/day.html#step", {"step": new_step})
   
   return render(request, "partials/create_break_step_form.html", {"form": form, "dayid": id})
 
@@ -219,18 +181,10 @@ def work_step_create(request, id):
 
     new_step = Step(day_id=id, type=Step.WORK)
     new_step.save()
-    work_session = [WorkSession(step=new_step) for _ in range(data["sessions_counter"])]
-    WorkSession.objects.bulk_create(work_session)
-  
-    return HttpResponse(
-                  status=204,
-                  headers={
-                      "HX-Trigger": json.dumps({
-                          "closeDialog": None,
-                          "stepCreated": None, 
-                      }),
-                  }
-               ) 
+    work_sessions = [WorkSession(step=new_step) for _ in range(data["sessions_counter"])]
+    new_step.sessions.bulk_create(work_sessions)
+
+    return render(request, "core/day.html#step", {"step": new_step})
   
   return render(request, "partials/create_work_step_form.html", {"dayid": id, "form": form})
 
@@ -253,10 +207,7 @@ def step_toggle(request, id):
     step.is_complete = not step.is_complete
     step.save()
     
-    # We need to render the step list again or just the single step?
-    # Since step_list.html iterates over steps, rendering it again is easier if we have the day_id
-    steps = Step.objects.prefetch_related("sessions").filter(day_id=step.day_id)
-    return render(request, "partials/step_list.html", {"steps": steps})
+    return HttpResponse(status=204)
 
 @require_POST
 @login_required
@@ -265,10 +216,7 @@ def session_toggle(request, id):
     session.is_complete = not session.is_complete
     session.save()
     
-    # Refresh the step list to show updated session state
-    steps = Step.objects.prefetch_related("sessions").filter(day_id=session.step.day_id)
-    return render(request, "partials/step_list.html", {"steps": steps})
-
+    return HttpResponse(status=204)
 @require_POST
 @login_required
 def session_create(request, id):
@@ -277,3 +225,61 @@ def session_create(request, id):
     
     steps = Step.objects.prefetch_related("sessions").filter(day_id=step.day_id)
     return render(request, "partials/step_list.html", {"steps": steps})
+
+@login_required
+def new(request):
+  if request.method == "POST":
+    form = CreatingDayForm(request.POST, user=request.user)
+    if form.is_valid():
+      data = form.cleaned_data
+      new_day = Day(owner=request.user, title=data["title"], date=data["date"])
+      new_day.save()
+      
+      return HttpResponse(
+                  status=204,
+                  headers={
+                      "HX-Location": json.dumps({
+                          "path": reverse("core:day-get", kwargs={'id': new_day.pk}),
+                          "target": "#page-content",
+                          "swap": "innerHTML",
+                      })
+                  }
+              )
+
+    return render(request, "core/new.html#form", {"form": form})
+  
+  form = CreatingDayForm()
+  if request.htmx:
+    return render(request, "core/new.html#page", {"form": form})
+    
+
+  return render(request, "core/new.html", {"form": form})
+
+
+@require_POST
+@login_required
+def day_create(request):
+    form = CreatingDayForm(request.POST, user=request.user)
+    
+    if form.is_valid():
+      data = form.cleaned_data
+
+      new_day = Day(owner=request.user, title=data["title"], date=data["date"])
+      new_day.save()
+  
+      return HttpResponse(
+                  status=204,
+                  headers={
+                      "HX-Trigger": json.dumps({
+                          "closeDialog": None,
+                          "refreshDayList": None, 
+                      }),
+                      "HX-Location": json.dumps({
+                          "path": reverse("core:day-get", kwargs={'id': new_day.pk}),
+                          "target": "#day-content",
+                          "swap": "outerHTML",
+                      })
+                  }
+              )
+
+    return render(request, 'partials/creating_day_form.html', {"form": form})

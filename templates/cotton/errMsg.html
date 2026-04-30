@@ -1,4 +1,8 @@
-<div x-data role="alert" class="flex justify-between items-center border-destructive border bg-destructive/50 rounded p-3">
-    <span>{{ slot }}</span>
-    <button type="button" @click="$el.parentElement.remove()" class="rounded-full hover:bg-secondary text-sm w-6 h-6 flex items-center justify-center">X</button>
+<div x-data
+     role="alert"
+     class="flex justify-between items-center border-destructive border bg-destructive/20 rounded p-3">
+    <span class="text-foreground">{{ slot }}</span>
+    <button type="button"
+            @click="$el.parentElement.remove()"
+            class="rounded-full hover:bg-secondary text-sm w-6 h-6 flex items-center justify-center">X</button>
 </div>

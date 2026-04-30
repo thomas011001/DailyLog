@@ -1,7 +1,6 @@
-<div >
-    <div class=" text-primary">
-        <div class="bg-base-200 min-h-full w-70 p-6 flex flex-col items-center"
-            x-data="{ mode: 'work', timeLeft: 1500, sessionsInSet: 0, totalSessions: 0, isRunning: false, interval: null, settings: { work: 1500, short: 300, long: 900 }, init() { const saved = JSON.parse(localStorage.getItem('pomoState')); if (saved) { this.mode = saved.mode || 'work'; this.timeLeft = saved.timeLeft || this.settings[this.mode]; this.sessionsInSet = saved.sessionsInSet || 0; this.totalSessions = saved.totalSessions || 0; } this.$watch('timeLeft', val => this.save()); this.$watch('mode', val => this.save()); this.$watch('sessionsInSet', val => this.save()); this.$watch('totalSessions', val => this.save()); }, save() { localStorage.setItem('pomoState', JSON.stringify({ mode: this.mode, timeLeft: this.timeLeft, sessionsInSet: this.sessionsInSet, totalSessions: this.totalSessions })); }, toggle() { if (this.isRunning) { clearInterval(this.interval); this.isRunning = false; } else { this.isRunning = true; this.interval = setInterval(() => { if (this.timeLeft > 0) { this.timeLeft--; } else { this.completeSession(); } }, 1000); } }, completeSession() { clearInterval(this.interval); this.isRunning = false; new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play().catch(() => {});  if (this.mode === 'work') { this.sessionsInSet++; this.totalSessions++; if (this.sessionsInSet >= 4) { this.setMode('long'); this.sessionsInSet = 0; } else { this.setMode('short'); } } else { this.setMode('work'); } }, reset() { clearInterval(this.interval); this.isRunning = false; this.timeLeft = this.settings[this.mode]; }, skip() { this.completeSession(); }, setMode(m) { clearInterval(this.interval); this.isRunning = false; this.mode = m; this.timeLeft = this.settings[m]; }, get formatTime() { const m = Math.floor(this.timeLeft / 60); const s = this.timeLeft % 60; return `${m}:${s < 10 ? '0' : ''}${s}`; }, get strokeDashoffset() { const total = this.settings[this.mode]; return 553 - ((total - this.timeLeft) / total) * 553; } }">
+<div class="relative w-70 border-l border-border">
+        <div class="fixed h-dvh text-foreground bg-base-200 w-70 p-6 flex flex-col items-center"
+             x-data="{ mode: 'work', timeLeft: 1500, sessionsInSet: 0, totalSessions: 0, isRunning: false, interval: null, settings: { work: 1500, short: 300, long: 900 }, init() { const saved = JSON.parse(localStorage.getItem('pomoState')); if (saved) { this.mode = saved.mode || 'work'; this.timeLeft = saved.timeLeft || this.settings[this.mode]; this.sessionsInSet = saved.sessionsInSet || 0; this.totalSessions = saved.totalSessions || 0; } this.$watch('timeLeft', val => this.save()); this.$watch('mode', val => this.save()); this.$watch('sessionsInSet', val => this.save()); this.$watch('totalSessions', val => this.save()); }, save() { localStorage.setItem('pomoState', JSON.stringify({ mode: this.mode, timeLeft: this.timeLeft, sessionsInSet: this.sessionsInSet, totalSessions: this.totalSessions })); }, toggle() { if (this.isRunning) { clearInterval(this.interval); this.isRunning = false; } else { this.isRunning = true; this.interval = setInterval(() => { if (this.timeLeft > 0) { this.timeLeft--; } else { this.completeSession(); } }, 1000); } }, completeSession() { clearInterval(this.interval); this.isRunning = false; new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3').play().catch(() => {});  if (this.mode === 'work') { this.sessionsInSet++; this.totalSessions++; if (this.sessionsInSet >= 4) { this.setMode('long'); this.sessionsInSet = 0; } else { this.setMode('short'); } } else { this.setMode('work'); } }, reset() { clearInterval(this.interval); this.isRunning = false; this.timeLeft = this.settings[this.mode]; }, skip() { this.completeSession(); }, setMode(m) { clearInterval(this.interval); this.isRunning = false; this.mode = m; this.timeLeft = this.settings[m]; }, get formatTime() { const m = Math.floor(this.timeLeft / 60); const s = this.timeLeft % 60; return `${m}:${s < 10 ? '0' : ''}${s}`; }, get strokeDashoffset() { const total = this.settings[this.mode]; return 553 - ((total - this.timeLeft) / total) * 553; } }">
             <div class="flex flex-col items-center w-full mb-8">
                 <h2 class="text-[0.65rem] font-bold tracking-[0.2em] text-base-content/40 mb-4 w-full text-center uppercase">
                     Focus Module
@@ -10,7 +9,7 @@
                 <div class="flex gap-2 justify-center">
                     <template x-for="i in 4">
                         <div class="size-1.5 rounded-full transition-all duration-500"
-                            :class="i <= sessionsInSet ? 'bg-primary shadow-[0_0_8px_rgba(var(--p),0.5)]' : 'bg-base-content/10'">
+                             :class="i <= sessionsInSet ? 'bg-primary shadow-[0_0_8px_rgba(var(--p),0.5)]' : 'bg-base-content/10'">
                         </div>
                     </template>
                 </div>
@@ -40,9 +39,9 @@
                 </svg>
                 <div class="flex flex-col items-center justify-center z-10">
                     <span class="text-5xl font-black tracking-tighter text-base-content"
-                        x-text="formatTime">25:00</span>
+                          x-text="formatTime">25:00</span>
                     <span class="text-[0.6rem] font-bold tracking-[0.15em] text-base-content/40 mt-1 uppercase"
-                        x-text="mode + ' phase'">work phase</span>
+                          x-text="mode + ' phase'">work phase</span>
                 </div>
             </div>
             <div class="flex flex-col w-full gap-3 mt-auto mb-6">
@@ -50,22 +49,22 @@
                         class="btn btn-primary shadow-lg w-full h-14 rounded-2xl flex items-center justify-center gap-3 border-none transition-all duration-300 active:scale-95">
                     <template x-if="!isRunning">
                         <svg xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            class="size-5">
+                             viewBox="0 0 24 24"
+                             fill="currentColor"
+                             class="size-5">
                             <path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd" />
                         </svg>
                     </template>
                     <template x-if="isRunning">
                         <svg xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                            class="size-5">
+                             viewBox="0 0 24 24"
+                             fill="currentColor"
+                             class="size-5">
                             <path fill-rule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z" clip-rule="evenodd" />
                         </svg>
                     </template>
                     <span class="tracking-widest font-bold text-xs uppercase"
-                        x-text="isRunning ? 'Pause' : 'Start'">Start</span>
+                          x-text="isRunning ? 'Pause' : 'Start'">Start</span>
                 </button>
                 <div class="flex gap-2">
                     <button @click="skip()"
@@ -78,11 +77,5 @@
                     </button>
                 </div>
             </div>
-            <div class="flex justify-between w-full px-2">
-                <span class="text-[0.6rem] font-bold text-base-content/30 uppercase tracking-widest">Sessions Total</span>
-                <span class="text-[0.6rem] font-black text-primary uppercase tracking-widest"
-                    x-text="totalSessions">0</span>
-            </div>
         </div>
-    </div>
 </div>

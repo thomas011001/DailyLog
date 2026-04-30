@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
-<fieldset class="flex flex-col gap-1 flex-1">
-    <label class="label text-primary font-bold text-sm">{{ field.label }}</label>
+<fieldset class="flex flex-col gap-1">
+    <label class="label text-foreground font-bold text-sm">{{ field.label }}</label>
     {{ field|add_class:"bg-input border-border border rounded p-2 w-full text-primary" }}
     {% if field.errors %}
         <c-errMsg>

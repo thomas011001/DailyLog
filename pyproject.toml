@@ -13,7 +13,7 @@ dependencies = [
     "django-widget-tweaks (>=1.5.1,<2.0.0)",
     "django-htmx (>=1.27.0,<2.0.0)",
     "django-cotton (>=2.6.2,<3.0.0)",
-    "django-browser-reload (>=1.21.0,<2.0.0)"
+    "django-browser-reload (>=1.21.0,<2.0.0)",
 ]
 
 
@@ -28,5 +28,5 @@ dev = [
 ]
 
 [tool.taskipy.tasks]
-dev = "python manage.py runserver"
+dev = "honcho start"
 shell = "python manage.py shell"

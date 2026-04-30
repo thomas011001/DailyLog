@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block basecontent %}
+    {% partialdef page inline %}
+    {% load widget_tweaks %}
+    <div class="h-full p-5 flex flex-col">
+        <h1 class="text-4xl font-bold text-primary">Create New Day</h1>
+        <div class="h-px w-full border border-border my-3"></div>
+        <form hx-post="{% url 'core:day-create' %}"
+              hx-target="this"
+              hx-swap="innerHTML"
+              class="flex flex-col flex-1 gap-3"
+              x-data="{loading: false}"
+              @htmx:before-request="loading = true"
+              @htmx:after-request="loading = false">
+            {% partialdef form inline %}
+            {% csrf_token %}
+            {% for field in form %}<c-fieldset :field="field"></c-fieldset>{% endfor %}
+            <div class="flex gap-2">
+                <button type="button"
+                        class="p-1 border border-border text-foreground rounded active:bg-muted-foreground/20 transition flex-1"
+                        @click="$refs.dateInput.value = new Date().toLocaleDateString('en-CA')">Today</button>
+                <button type="button"
+                        class="p-1 border border-border text-foreground rounded active:bg-muted-foreground/20 transition flex-1"
+                        @click=" const d = new Date(); d.setDate(d.getDate() + 1); $refs.dateInput.value = d.toLocaleDateString('en-CA'); ">
+                    Tomorrow
+                </button>
+            </div>
+            <button class="bg-primary text-primary-foreground rounded p-2 w-full mt-auto"
+                    x-text="loading ? 'Creating...' : 'Create'"
+                    :disable="loading"
+                    :class="{'bg-primary/50': loading}"></button>
+        {% endpartialdef %}
+    </form>
+</div>
+{% endpartialdef %}
+{% endblock basecontent %}

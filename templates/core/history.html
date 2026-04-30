@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block basecontent %}
+    {% partialdef page inline %}
+    <div class="h-full p-5 flex flex-col">
+        <h1 class="text-4xl font-bold text-primary">Your History</h1>
+        <div class="h-px w-full border border-border my-3"></div>
+        <ul class="flex flex-col gap-3">
+            {% for day in days %}
+                <div class="group">
+                    <button class="w-full border border-border rounded flex justify-between p-2 bg-secondary group-hover:-translate-y-1 transition active:bg-secondary/50"
+                            hx-get="{% url "core:day-get" day.id %}"
+                            hx-target="#page-content"
+                            hx-push-url="true"
+                            hx-swap="innerHTML">
+                        <span class="text-secondary-foreground font-bold">{{ day.title|upper|default:"Untitled" }}</span>
+                        <span class="text-secondary-foreground/50">{{ day.date }}</span>
+                    </button>
+                </div>
+            {% endfor %}
+        </ul>
+        <div class="mt-auto flex justify-center items-center">
+            <div class="border border-border rounded flex bg-secondary text-secondary-foreground">
+                <button class="p-3"
+                        x-show="'{{ has_previous }}' == 'True'"
+                        hx-get="{% url "core:day-list" %}{% querystring page=previous %}"
+                        hx-target="#page-content"
+                        hx-swap="innerHTML"
+                        hx-push-url="true">Previos</button>
+                <span class="p-3 border-x border-border">{{ page_number }}</span>
+                <button class="p-3"
+                        x-show="'{{ has_next }}' == 'True'"
+                        hx-get="{% url "core:day-list" %}{% querystring page=page_number|add:1 %}"
+                        hx-target="#page-content"
+                        hx-swap="innerHTML"
+                        hx-push-url="true">Next</button>
+            </div>
+        </div>
+    </div>
+{% endpartialdef %}
+{% endblock basecontent %}

@@ -9,12 +9,13 @@
                     <p class="text-base-content/50">Enter your credentials to enter your Dailylog.</p>
                 </div>
             </div>
-            <div class="border border-border text-primary rounded max-w-sm w-full p-6">
+            <div class="border border-border bg-card rounded text-card-foreground max-w-sm w-full p-6">
                 <div id="login-container">
                     <c-login-form :form="form" />
                     <div class="flex justify-center items-center gap-1 mt-3">
                         <p class="text-sm text-muted-foreground">Don't have an account?</p>
-                        <a href="{% url "account:signup" %}" class="hover:underline hover:bg-yellow text-primary">Sign up</a>
+                        <a href="{% url "account:signup" %}"
+                           class="hover:underline hover:bg-yellow text-primary">Sign up</a>
                     </div>
                 </div>
             </div>

@@ -1,14 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div x-data class="bg-primary-foreground flex">
-            <c-sidebar />
-            <div class="m-2 w-full rounded flex border border-border bg-accent">
-                <div id="page-content" class="flex-1">
-                    {% block basecontent %}
-                    {% endblock basecontent %}
-                </div>
-                {# TimerSideBar #}
-                <c-pomoTimer />
+    <div x-data class="relative overflow-hidden bg-background flex min-h-dvh">
+        <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary rounded-full blur-3xl opacity-10"></div>
+        <c-sidebar></c-sidebar>
+        <div class="relative overflow-hidden m-2 w-full rounded-md flex border border-border bg-accent">
+            <div class="absolute -top-15 -left-15 size-50 bg-primary rounded-full blur-3xl opacity-10"></div>
+            <div id="page-content" class="flex-1 z-1">
+                {% block basecontent %}
+                {% endblock basecontent %}
             </div>
+            {# TimerSideBar #}
+            <c-pomoTimer />
+        </div>
     </div>
 {% endblock body %}
